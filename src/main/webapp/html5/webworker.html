@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+	<meta charset="utf-8">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <title>webworker.html</title>
+
+  </head>
+  
+  <body>
+	<p>计数: <output id="result"></output></p>
+	<button onclick="startWorker()">开始 Worker</button> 
+	<button onclick="stopWorker()">停止 Worker</button>
+	<br /><br />
+	
+	<script>
+	var w;
+	
+	//HTML5引入了一个工作线程（webWorker）的概念。它允许开发人员编写能够长时间运行而不被用户所中断的后台程序，
+	//去执行事务或者逻辑，并同时保证页面对用户的响应。从而，可以用webWorker来处理一些比较耗时的计算。
+	//允许JavaScript创建多个线程，但是子线程完全受主线程控制，且不得操作DOM。
+	//woker.js执行的全局上下文是WorkerGlobalScope，所以无法访问window、与window相关的DOM API。
+	
+	//Web Worker无法访问DOM节点；
+	//Web Worker无法访问全局变量或是全局函数；
+	//Web Worker无法调用alert()或者confirm之类的函数；
+	//Web Worker无法访问window、document之类的浏览器全局变量；
+	
+	//1.可以加载一个JS进行大量的复杂计算而不挂起主进程，并通过postMessage，onmessage进行通信
+	//2.可以在worker中通过importScripts(url)加载另外的脚本文件，不能跨域加载JS。
+	//3.可以使用 addEventListener, setTimeout(), clearTimeout(), setInterval(), and clearInterval()
+	//4.可以使用XMLHttpRequest来发送ajax请求
+	//5.可以访问navigator的部分属性
+	function startWorker() {
+	  if(typeof(Worker) !== "undefined") {
+	    if(typeof(w) == "undefined") {
+	      w = new Worker("worker.js");
+	    }
+	    w.onmessage = function (event) {
+	      document.getElementById("result").innerHTML = event.data;
+	    };
+	    w.onerror = function(e) {
+          //打印出错消息
+          console.log(e.message);
+          //中断与子线程的联系
+          w.terminate();
+        };
+	  } else {
+	    document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Workers...";
+	  }
+	}
+	
+	function stopWorker() { 
+	  w.terminate();
+	}
+	</script>
+  </body>
+</html>

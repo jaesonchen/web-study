@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <title>canvas.html</title>
+  </head>
+  
+  <body>
+	<canvas id="myCanvas" width="200" height="100" style="border:1px solid #c3c3c3;">
+	您的浏览器不支持 HTML5 canvas 标签。
+	</canvas>
+	
+	<canvas id="myCanvas1" width="200" height="100" style="border:1px solid #c3c3c3;">
+	您的浏览器不支持 HTML5 canvas 标签。
+	</canvas>
+	
+	<canvas id="myCanvas2" width="200" height="100" style="border:1px solid #c3c3c3;">
+	您的浏览器不支持 HTML5 canvas 标签。
+	</canvas>
+	
+	<canvas id="myCanvas3" width="200" height="100" style="border:1px solid #c3c3c3;">
+	您的浏览器不支持 HTML5 canvas 标签。
+	</canvas>
+
+	<p>Canvas:</p>
+	<canvas id="myCanvas4" width="500" height="300" style="border:1px solid #d3d3d3;background:#ffffff;">
+	Your browser does not support the HTML5 canvas tag.
+	</canvas>
+	
+	<script>
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+	//画方框
+	ctx.fillStyle = "#FF0000";
+	ctx.fillRect(0,0,150,75);
+	//画线
+	ctx.moveTo(0,0);
+	ctx.lineTo(200,100);
+	ctx.lineTo(10,50);
+	ctx.stroke();
+	//画圆arc(x,y,r,start,stop)
+	ctx.beginPath();
+	ctx.arc(95,50,40,0,2*Math.PI);
+	ctx.stroke();
+	
+	ctx.fillStyle="#00FF00";
+	ctx.beginPath();
+	ctx.arc(150,20,15,0,Math.PI*2,true);
+	ctx.closePath();
+	ctx.fill();
+	
+	//canvas 绘制文本
+	//font - 定义字体
+	//fillText(text,x,y) - 在 canvas 上绘制实心的文本
+	//strokeText(text,x,y) - 在 canvas 上绘制空心的文本
+	var c1 = document.getElementById("myCanvas1");
+	var ctx1 = c1.getContext("2d");
+	ctx1.font="30px Arial";
+	ctx1.fillText("Hello World",10,50);
+	ctx1.strokeText("Hello World",10,100);
+	
+	//Canvas - 渐变
+	//渐变可以填充在矩形, 圆形, 线条, 文本等等, 各种形状可以自己定义不同的颜色。
+	//createLinearGradient(x,y,x1,y1) - 创建线条渐变
+	//createRadialGradient(x,y,r,x1,y1,r1) - 创建一个径向/圆渐变
+	//当我们使用渐变对象，必须使用两种或两种以上的停止颜色。
+	//addColorStop()方法指定颜色停止，参数使用坐标来描述，可以是0至1.
+	var c2 = document.getElementById("myCanvas2");
+	var ctx2 = c2.getContext("2d");
+	// Create gradient
+	var grd = ctx2.createLinearGradient(0,0,200,0);
+	grd.addColorStop(0,"red");
+	grd.addColorStop(1,"#00FF00");
+	// Fill with gradient
+	ctx2.fillStyle=grd;
+	ctx2.fillRect(10,10,150,60);
+
+	var c3 = document.getElementById("myCanvas3");
+	var ctx3 = c3.getContext("2d");
+	// Create gradient
+	var grd1 = ctx3.createRadialGradient(50,50,5,80,50,40);
+	grd1.addColorStop(0,"red");
+	grd1.addColorStop(1,"white");
+	// Fill with gradient
+	ctx3.fillStyle = grd1;
+	ctx3.fillRect(10,10,150,80);
+	
+	//Canvas - 图像
+	//drawImage(image,x,y) 把一幅图像放置到画布上
+	var c4 = document.getElementById("myCanvas4");
+	var ctx4 = c4.getContext("2d");
+	var img = new Image();
+	img.src = "tulip.jpg";
+	ctx4.drawImage(img,10,10);
+	</script>
+	
+
+	
+  </body>
+</html>

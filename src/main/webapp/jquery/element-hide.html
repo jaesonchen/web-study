@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>element-hide.html</title>
+	
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!-- <link rel="stylesheet" type="text/css" href="./styles.css"> -->
+    <!-- javascript是html5的默认脚本语言，不需要指定 -->
+	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script> -->
+	
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$("#byId").click(function() {
+			$("#test").hide();
+		});
+		
+		$("#byClass").click(function() {
+			$(".test").hide();
+		});
+		
+		$("#byElement").click(function() {
+			$("p").hide();
+		});
+		
+		$("p").click(function() {
+			$(this).hide();
+		});
+	});
+	</script>
+  </head>
+
+  <body>
+	<h2 class="test">This is a class heading</h2>
+	<p id="test">This is id paragraph.</p>
+	<p>This is a paragraph.</p>
+	<p>This is another paragraph.</p>
+	<button type="button" id="byId">Click me(id)</button>
+	<button type="button" id="byClass">Click me(class)</button>
+	<button type="button" id="byElement">Click me(p)</button>
+  </body>
+</html>

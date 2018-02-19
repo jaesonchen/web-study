@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>dom.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+  	<p id="intro">My first paragraph...</p>
+    <ul>
+		<li>List item 1</li>
+		<li>List item 2</li>
+		<li>List item 3</li>
+	</ul>
+	<div id="div"></div>
+	<script type="text/javascript">
+	// <![CDATA[
+    function show(msg, data) {
+        $("#div").append($("<p></p>").text(msg + ": " + data));
+    }
+		
+    //DOM  Document Object Model（文档对象模型）定义了访问 HTML 和 XML 文档的标准：
+    //W3C 文档对象模型 （DOM） 是独立于平台和语言的接口，它允许程序和脚本动态地访问和更新文档的内容、结构和样式。
+    //W3C DOM 标准被分为 3 个不同的部分：
+    //•核心 DOM - 针对任何结构化文档的标准模型
+    //•XML DOM - 针对 XML 文档的标准模型，定义了所有 XML 元素的对象和属性，以及访问它们的方法。
+    //•HTML DOM - 针对 HTML 文档的标准模型，定义了所有 HTML 元素的对象和属性，以及访问它们的方法。
+    // 换言之，HTML DOM 是关于如何获取、修改、添加或删除 HTML 元素的标准。
+		
+    //在 HTML DOM 中，所有事物都是节点。DOM 是被视为节点树的 HTML。
+    //DOM 节点
+    //根据 W3C 的 HTML DOM 标准，HTML 文档中的所有内容都是节点：
+    //•整个文档是一个文档节点
+    //•每个 HTML 元素是元素节点
+    //•HTML 元素内的文本是文本节点
+    //•每个 HTML 属性是属性节点
+    //•注释是注释节点	
+    //DOM 处理中的常见错误是认为元素节点包含文本。元素节点的文本是存储在文本节点中的。
+		
+    //编程接口
+    //可通过 JavaScript （以及其他编程语言）对 HTML DOM 进行访问。
+    //所有 HTML 元素被定义为对象，而编程接口则是对象方法和对象属性。
+    //方法是您能够执行的动作（比如添加或修改元素）。
+    //属性是您能够获取或设置的值（比如节点的名称或内容）。
+		
+    //HTML DOM 方法：方法是我们可以在节点（HTML 元素）上执行的动作。
+    //getElementById(id) 	    - 获取带有指定 id 的节点（元素）
+    //getElementsByTagName() 	- 返回包含带有指定标签名称的所有元素的节点列表（集合/节点数组）。 
+    //getElementsByClassName() 	- 返回包含带有指定类名的所有元素的节点列表（集合/节点数组）。 
+    //注释：getElementsByClassName() 在 Internet Explorer 5,6,7,8 中无效。
+    //appendChild(node) 	    - 插入新的子节点（元素）,将新元素作为父元素的最后一个子元素进行添加。
+    //insertBefore(node, positionNode)   - 在指定的子节点前面插入新的子节点。 
+    //removeChild(node) 	    - 删除子节点（元素）
+    //提示：不能在不引用parentNode的情况下删除某个节点，常用的解决方法：childNode.parentNode.removeChild(childNode);
+    //createElement(tag) 	    - 创建元素节点。 
+    //createTextNode(text) 	    - 创建文本节点。 
+    //createAttribute() 	    - 创建属性节点。
+    //getAttribute() 		    - 返回指定的属性值。 
+    //setAttribute() 		    - 把指定属性设置或修改为指定的值。 
+		
+    //HTML DOM 属性：属性是节点（HTML 元素）的值，您能够获取或设置。
+    //innerHTML 	- 节点（元素）的文本值，innerHTML 属性可用于获取或改变任意 HTML 元素，包括 <html> 和 <body>。
+    
+    //nodeName		- 节点的名称。nodeName 是只读的。
+    //•元素节点的 nodeName 与标签名相同
+    //•属性节点的 nodeName 与属性名相同
+    //•文本节点的 nodeName 始终是 #text
+    //•文档节点的 nodeName 始终是 #document
+    //注释：nodeName 始终包含 HTML 元素的大写字母标签名。
+		
+    //nodeValue		- 节点的值。
+    //•元素节点的 nodeValue 是 undefined 或 null
+    //•文本节点的 nodeValue 是文本本身
+    //•属性节点的 nodeValue 是属性值
+		
+    //nodeType		- 节点的类型。nodeType 是只读的。元素=1、属性=2、文本=3
+		
+    //导航节点关系:
+    //parentNode
+    //firstChild	- element.firstChild.nodeValue
+    //lastChild
+    //nextSibling
+    //previousSibling
+    //childNodes 	- 节点（元素）的子节点列表
+    //除了 innerHTML 属性，您也可以使用 childNodes 和 nodeValue 属性来获取元素的内容。element.childNodes[0].nodeValue
+    //attributes 	- 节点（元素）的属性节点列表
+		
+    //HTML DOM 根节点
+    //有两个特殊的属性，可以访问全部文档：
+    //•document.documentElement - 全部文档，以<html></html>标签为根节点的文档
+    //•document.body 			- 文档的主体，以<body></body>标签为根节点的文档
+		
+    //XML DOM 定义了访问和处理 XML 文档的标准方法。
+    //DOM 是这样规定的：
+    //•整个文档是一个文档节点
+    //•每个 XML 标签是一个元素节点
+    //•包含在 XML 元素中的文本是文本节点
+    //•每一个 XML 属性是一个属性节点
+    //•注释属于注释节点
+		
+    //DOM - 空白和换行
+    //Firefox，以及其他一些浏览器，会把空的空白或换行作为文本节点来处理，而 Internet Explorer 不会这样。
+    //如需忽略元素节点之间的空文本节点，需要检查节点类型。元素节点的类型是 1。
+		
+    //解析器把 XML 转换为 JavaScript 可存取的对象。
+    //Error: Access Across Domains 
+    //出于安全方面的原因，现代的浏览器不允许跨域的访问。网页以及它试图加载的 XML 文件，都必须位于相同的服务器上。
+    //解析 XML 字符串
+    //注释：Internet Explorer 使用 loadXML() 方法来解析 XML 字符串，而其他浏览器使用 DOMParser 对象。
+    function parseXMLStr(xmltext) {
+        var xmlDoc = null;
+        try {
+            //Internet Explorer
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            //关闭异步加载，这样可确保在文档完整加载之前，解析器不会继续执行脚本
+            xmlDoc.async = "false";
+            xmlDoc.loadXML(xmltext);
+        } catch (error) {
+            try {
+                //Firefox, Mozilla, Opera, etc.
+                var parser = new DOMParser();
+                xmlDoc = parser.parseFromString(xmltext, "text/xml");
+            } catch(e) { show(e.message); }
+        }
+        return xmlDoc;
+    }
+
+    //解析 XML 文件
+    function parseXML(url) {
+        var xmlDoc = null;
+        try {
+            //Internet Explorer
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+			xmlDoc.load(url);
+		} catch(error) {
+			try {
+				//Firefox, Mozilla, Opera, etc.
+    			xmlDoc = document.implementation.createDocument("", "", null);
+    			xmlDoc.async = false;
+    			xmlDoc.load(url);
+			} catch (e1) {
+				try {
+					//Google Chrome    
+					var xmlhttp = new XMLHttpRequest();
+				    xmlhttp.open('GET', url, false);
+				    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+				    xmlhttp.send('');
+				    xmlDoc = xmlhttp.responseXML; 
+     			} catch(e2) {
+     				show("error", e2);
+					show("error", "您的浏览器不能正常加载文件。请切换到兼容模式，或者更换浏览器");  
+     			}  
+			}
+		}
+		return xmlDoc;
+	}
+		
+	var xmltext = "";
+	xmltext += "<bookstore>";
+	xmltext += "  <book>";
+	xmltext += "    <title>Harry Potter</title>";
+	xmltext += "    <author cat='catogary'>J K. Rowling</author>";
+	xmltext += "    <year>2005</year>";
+	xmltext += "  </book>";
+	xmltext += "</bookstore>";
+		
+    var xmlobj = parseXMLStr(xmltext);
+    show("parseXMLStr", xmlobj.getElementsByTagName("title")[0].childNodes[0].nodeValue);
+		
+    var xmlfile = parseXML("dom.xml");
+    show("parseXML", xmlfile.getElementsByTagName("author")[0].childNodes[0].nodeValue);
+    show("parseXML", [xmlfile.documentElement.childNodes.length, xmlfile.documentElement.nodeName]);
+    
+    var arthor = xmlfile.getElementsByTagName("author")[0];
+    show("getElementsByTagName", arthor.nodeName + " = " + arthor.childNodes[0].nodeValue);
+    
+    //获取属性
+    var attr = arthor.attributes;
+    show("getNamedItem", attr.getNamedItem("cat").nodeValue);
+	
+    //使用getElementById DOM方法来访问p段落
+    var introParagraph = document.getElementById("intro");
+    // 访问无序列表: [0]索引
+    var unorderedList = document.getElementsByTagName('ul')[0];
+    //  获取所有的li集合:
+    var allListItems = unorderedList.getElementsByTagName('li');
+    // 循环遍历
+    for (var i = 0, length = allListItems.length; i < length; i++) {
+        // 弹出该节点的text内容
+        show("listItems", allListItems[i].firstChild.data);
+    }
+		
+    //操作元素
+    document.getElementById("intro").style.color = '#FF0000';
+    //通常DOM操作都是改变原始的内容，最简单的是使用innerHTML属性
+    var myIntro = document.getElementById("intro");
+    // 替换当前的内容
+    myIntro.innerHTML = 'New content for the <strong>amazing</strong> paragraph!';
+    // 添加内容到当前的内容里 
+    myIntro.innerHTML += '... some more content...';
+    show("innerHTML", myIntro.innerHTML);
+		
+    //Node节点
+    //通过DOM API创建内容的时候需要注意node节点的2种类型，一种是元素节点，一种是text节点，
+    //创建元素可以通过createElement方法，而创建text节点可以使用createTextNode
+    // 添加内容
+    var someText = 'This is the text I want to add';
+    var textNode = document.createTextNode(someText);
+    myIntro.appendChild(textNode);
+    show("createTextNode", myIntro.innerHTML);
+		
+    var myNewLink = document.createElement('a'); // <a/>
+    myNewLink.href = 'http://google.com'; // <a href="http://google.com"/>
+    myNewLink.appendChild(document.createTextNode('Visit Google')); // <a href="http://google.com">Visit Google</a>
+    // 将内容附加到文本节点
+    myIntro.appendChild(myNewLink);
+    show("appendChild", myIntro.innerHTML);
+
+    //提示：您只能在 HTML 输出中使用 document.write。如果您在文档加载后使用该方法，会覆盖整个文档。
+    document.write("<h1>This is a heading</h1>");
+    //show("body", document.body.innerHTML);
+	// ]]>
+	</script>
+  </body>
+</html>

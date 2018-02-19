@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+	<meta charset="utf-8">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <title>storage.html</title>
+
+  </head>
+  
+  <body>
+	<p>Visits: <span id="local">0</span> time(s). Visits <span id="session">0</span> time(s) this session. </p>
+	<p>刷新页面会看到计数器在增长。</p>
+	<p>请关闭浏览器窗口，然后再试一次，计数器会继续计数。</p>
+	
+	<script>
+	if (localStorage.pagecount) {
+	  localStorage.pagecount = Number(localStorage.pagecount) + 1;
+	} else {
+	  localStorage.pagecount = 1;
+	}
+	document.getElementById("local").innerHTML = localStorage.pagecount;
+	
+	if (sessionStorage.pagecount) {
+	  sessionStorage.pagecount = Number(sessionStorage.pagecount) + 1;
+	} else {
+	  sessionStorage.pagecount = 1;
+	}
+	document.getElementById("session").innerHTML = sessionStorage.pagecount;
+	</script>
+
+  </body>
+</html>

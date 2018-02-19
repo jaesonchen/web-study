@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>slideupdown.html</title>
+	
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$("#toggle").click(function(){
+    		$(".panel").slideToggle("slow");
+  		});
+  		
+  		$("#up").click(function(){
+    		$(".panel").slideUp("slow");
+  		});
+  		
+  		$("#down").click(function(){
+    		$(".panel").slideDown("slow");
+  		});
+  		
+  	});
+	</script>
+	<style type="text/css"> 
+	div.panel,p.flip {
+		margin:0px;
+		padding:5px;
+		text-align:center;
+		background:#e5eecc;
+		border:solid 1px #c3c3c3;
+	}
+	div.panel {
+		height:120px;
+		display:none;
+	}
+	</style>
+  </head>
+  
+  <body>
+	<div class="panel">
+		<p>W3School - 领先的 Web 技术教程站点</p>
+		<p>在 W3School，你可以找到你所需要的所有网站建设教程。</p>
+	</div>
+	<p class="flip" id="up">请点击这里</p>
+	<p class="flip" id="down">请点击这里</p>
+	<p class="flip" id="toggle">请点击这里</p>
+  </body>
+</html>

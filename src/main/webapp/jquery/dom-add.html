@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>dom-add.html</title>
+	
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	//•append() 	- 在被选元素的结尾插入新元素/内容
+	//•prepend() 	- 在被选元素的开头插入新元素/内容
+	//•after() 		- 在被选元素之后插入新元素/内容
+	//•before() 	- 在被选元素之前插入新元素/内容
+	
+	$(document).ready(function() {
+		$("#btn1").click(function(){
+	    	$("#old").append(" <b>Appended text</b>.");
+	    	var txt1="<p>Text.</p>";              	// 以 HTML 创建新元素
+			var txt2=$("<p></p>").text("Text.");  	// 以 jQuery 创建新元素
+			var txt3=document.createElement("p");
+			txt3.innerHTML="Text.";               	// 通过 DOM 来创建文本
+			$("#old").append(txt1,txt2,txt3);     		// 追加新元素
+			alert($("body").html());
+	  	});
+	  	$("#btn2").click(function(){
+	    	$("ol").append("<li>Appended item</li>");
+	    	alert($("body").html());
+	  	});
+	  	
+	  	$("#btn3").click(function(){
+    		$("#old").prepend("<b>Prepended text</b>. ");
+    		alert($("body").html());
+  		});
+  		$("#btn4").click(function(){
+    		$("ol").prepend("<li>Prepended item</li>");
+    		alert($("body").html());
+  		});
+	  	
+		$("#btn5").click(function(){
+    		$("#old").after("<b>After text</b>. ");
+			alert($("body").html());
+  		});
+  		$("#btn6").click(function(){
+    		$("#old").before("<p>Before p element</p>");
+    		alert($("body").html());
+  		});
+	});
+	</script>
+  </head>
+  
+  <body>
+	<p id="old">This is a paragraph.</p>
+	<ol>
+	<li>List item 1</li>
+	<li>List item 2</li>
+	<li>List item 3</li>
+	</ol>
+	<button id="btn1">在内容结尾追加文本</button>
+	<button id="btn2">在内容结尾追加列表项</button>
+	<button id="btn3">在内容开始追加文本</button>
+	<button id="btn4">在内容开始追加列表项</button>
+	<button id="btn5">在元素之后追加文本</button>
+	<button id="btn6">在元素之后追加元素</button>
+  </body>
+</html>

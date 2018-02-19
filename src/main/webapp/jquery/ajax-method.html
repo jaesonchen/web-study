@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ajax-method.html</title>
+	
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	//HTTP 请求：GET vs. POST
+	//•GET 	- 从指定的资源请求数据
+	//•GET 请求可被缓存
+	//•GET 请求保留在浏览器历史记录中
+	//•GET 请求可被收藏为书签
+	//•GET 请求不应在处理敏感数据时使用
+	//•GET 请求有长度限制
+	//•GET 请求只应当用于取回数据
+	
+	//•POST - 向指定的资源提交要处理的数据
+	//•POST 请求不会被缓存
+	//•POST 请求不会保留在浏览器历史记录中
+	//•POST 不能被收藏为书签
+	//•POST 请求对数据长度没有要求
+	
+	//GET 基本上用于从服务器获得（取回）数据。注释：GET 方法在url一样时可能返回缓存数据。
+	//POST 也可用于从服务器获取数据。不过，POST 方法不会缓存数据，并且常用于连同请求一起发送数据。
+	//$.get() 方法通过 HTTP GET 请求从服务器上请求数据。
+	//$.get(URL,callback);
+	//必需的 URL 参数规定您希望请求的 URL。
+	//可选的 callback 参数是请求成功后所执行的函数名。
+	//$.post() 方法通过 HTTP POST 请求从服务器上请求数据。
+	//$.post(URL,data,callback);
+	//必需的 URL 参数规定您希望请求的 URL。
+	//可选的 data 参数规定连同请求发送的数据。
+	//可选的 callback 参数是请求成功后所执行的函数名。
+	
+	$(document).ready(function(){
+
+		$("#button1").click(function(){
+    		$.get("/StudyExample/json/JSONAction.action",
+    			function(data,status){
+      				$("#div1").html(data);
+    		});
+  		});
+		
+		$("#button2").click(function(){
+    		$.post("/StudyExample/json/JSONAction.action", {},
+    			function(data,status){
+      				$("#div1").html(data);
+    		});
+  		});
+		
+	});
+	</script>
+  </head>
+  
+  <body>
+  	<div id="div1"><h2>Let AJAX change this text1</h2></div>
+	<button id="button1">向页面发送 HTTP GET 请求，然后获得返回的结果</button>
+	<button id="button2">向页面发送 HTTP POST 请求，然后获得返回的结果</button>
+  </body>
+</html>

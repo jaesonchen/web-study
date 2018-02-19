@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ajax.html</title>
+	
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	//load() 方法从服务器加载数据，并把返回的数据放入被选元素中。
+	//$(selector).load(URL,data,callback);
+	//必需的 URL 参数规定您希望加载的 URL。也可以把 jQuery 选择器添加到 URL 参数。
+	//可选的 data 参数规定与请求一同发送的查询字符串键/值对集合。
+	//可选的 callback 参数是 load() 方法完成后所执行的函数名称。
+	//callback 参数规定当 load() 方法完成后所要允许的回调函数。回调函数可以设置不同的参数：
+	//•responseTxt - 包含调用成功时的结果内容
+	//•statusTXT - 包含调用的状态
+	//•xhr - 包含 XMLHttpRequest 对象
+	
+	$(document).ready(function () {
+		$("#button1").click(function () {
+			$("#div1").load("/StudyExample/jquerystudy/ajax.txt");
+		});
+		
+		$("#button2").click(function () {
+			$("#div1").load("/StudyExample/jquerystudy/ajax.txt #p1");
+		});
+		
+		$("#button3").click(function () {
+			$("#div1").load("/StudyExample/jquerystudy/ajax.txt",
+				function (responseTxt, statusTxt, xhr) {
+			      if(statusTxt == "success")
+			        alert("外部内容加载成功！");
+			      if(statusTxt == "error")
+			        alert("Error: " + xhr.status + ": " + xhr.statusText);
+    		});
+		});
+		
+	});
+	</script>
+  </head>
+  
+  <body>
+	<div id="div1">使用 jQuery AJAX 来改变文本</div>
+	<button id="button1" type="button">load('url')</button>
+	<button id="button2" type="button">load('url element')</button>
+	<button id="button3" type="button">callback</button>
+  </body>
+</html>

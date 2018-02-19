@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>showhide.html</title>
+	
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$("#hide").click(function(){
+			$("p").hide();
+		});
+		$("#show").click(function(){
+			$("p").show();
+		});
+		$("#toggle").click(function(){
+			$("p").toggle();
+		});
+	});
+	</script>
+  </head>
+  
+  <body>
+    <p>如果点击“隐藏”按钮，我就会消失。</p>
+	<button id="hide" type="button">隐藏</button>
+	<button id="show" type="button">显示</button>
+	<button id="toggle" type="button">click</button>
+  </body>
+</html>

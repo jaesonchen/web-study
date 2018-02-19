@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>animate.html</title>
+	
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		
+		$("button").click(function(){
+    		var div=$("div");
+		    div.animate({height:'300px',opacity:'0.4'},"slow");
+		    div.animate({width:'300px',opacity:'0.8'},"slow");
+		    div.animate({height:'200px',opacity:'0.4'},"slow");
+		    div.animate({width:'200px',opacity:'0.8'},"slow");
+		    div.animate({fontSize:'3em'},"slow");
+		    //div.animate({height:'toggle'}); 
+  		});
+		
+	});
+	</script>
+  </head>
+  
+  <body>
+	<button>开始动画</button>
+	<p>默认情况下，所有 HTML 元素的位置都是静态的，并且无法移动。如需对位置进行操作，记得首先把元素的 CSS position 属性设置为 relative、fixed 或 absolute。</p>
+	<div style="background:#98bf21;height:100px;width:100px;position:absolute;">HELLO</div>
+  </body>
+</html>

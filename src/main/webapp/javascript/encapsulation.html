@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>encapsulation.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+	<div id="div"></div>
+	<script type="text/javascript">
+	// <![CDATA[
+	//如果你需要在没有硬编码的window标识符下访问全局对象，你可以在任何层级的函数作用域中做如下操作：
+	var global = (function () {
+		return this;
+	})();
+	function show(msg, data) {
+	    $("#div").append($("<p></p>").text(msg + ": " + data));
+	}
+
+	//对象定义：ECMA-262把对象定义为：“无序属性的集合，其中属性可以包括基本值、对象或者函数”。
+	//创建对象：每个对象都是基于一个引用类型创建的。
+	//这个引用类型可以是原生类型(Object, Array, Date, RegExp, Function, Boolean, Number, String)，也可以是自定义类型。
+		
+	//1、构造函数模式
+	function Person(name, age) {
+		this.name = name;
+		this.age = age;
+		this.sayName = function() {
+		    show("this.name", this.name);
+		};
+	}
+	//通过以上构造函数使用new操作符可以创建对象实例。
+	var zhangsan = new Person('zhangsan', 20);
+	var lisi = new Person('lisi', 20);
+	zhangsan.sayName();			//zhangsan
+	lisi.sayName();				//lisi
+		
+	//通过new创建对象经历4个步骤
+	//a、创建一个新对象；[var o = new Object();]
+	//b、将构造函数的作用域赋给新对象（因此this指向了这个新对象）；[Person.apply(o)]  [Person原来的this指向的是global]
+	//c、执行构造函数中的代码(为这个新对象添加属性)
+	//d、返回新对象。
+	//通过代码还原new的步骤：
+	function createObject(P) {
+	    var o = new Object();
+	    var args = Array.prototype.slice.call(arguments, 1);
+	    o.__proto__ = P.prototype;
+	    P.prototype.constructor = P;
+	    P.apply(o, args);
+	    return o;
+	}
+	//测试新的创建实例方法
+	var wangwu = createObject(Person, 'wangwu', 20);
+	wangwu.sayName();		//wangwu
+		
+	//2、原型模式
+	//原型对象概念：无论什么时候，只要创建一个新函数，就会根据一组特定的规则为该函数创建一个prototype属性，这个属性指向函数的原型对象。
+	//在默认情况下，所有原型对象都会自动获得一个constructor（构造函数）属性，这个属性包含一个指向 prototype 属性所在函数的指针。
+	//而通过这个构造函数，可以继续为原型对象添加其他属性和方法。
+	//创建了自定义的构造函数后，其原型对象默认只会取得 constructor 属性；至于其他方法，则都从 Object 继承而来。
+	//当调用构造函数创建一个新实例后，该实例的内部将包含一个指针（__proto__），指向构造函数的原型对象。
+	//构造函数的原型对象，主要用途是让多个对象实例共享它所包含的属性和方法。
+	Person.prototype.country = 'chinese';
+	Person.prototype.sayCountry = function() {
+		show("this.country", this.country);
+	};
+	var zhaoliu = new Person('zhaoliu', 20);
+	zhaoliu.sayCountry();		//chinese
+		
+	//3、组合使用构造函数模式和原型模式
+	//这种模式是使用最广泛、认同度最高的一种创建自定义类型的方式。构造函数模式用于定义实例属性，而原型模式用于定义方法和共享的属性。
+	//这样，每个实例都有自己的一份实例属性的副本，同时有共享着对方法的引用，最大限度的节省了内存。
+	
+	//封装私有属性和方法
+	var Book = (function() {
+		// Private static attributes.
+		// 私有静态属性
+		var numOfBooks = 0;
+		// Private static method.
+		// 私有静态函数
+		function checkIsbn(isbn) {
+			//	... 
+			return isbn != null;
+		};
+		// Return the constructor.  
+		// 返回构造器
+		return function(newIsbn, newTitle, newAuthor) {
+			// Private attributes. 
+			// 私有属性
+			var isbn, title, author;
+			// Privileged methods.
+			// 特权函数是指可以访问私有属性的函数
+			this.getIsbn = function() {
+				return isbn; 
+			};
+			this.setIsbn = function(newIsbn) {
+				if(!checkIsbn(newIsbn))
+					throw new Error('Book: Invalid ISBN.');
+				isbn = newIsbn; 
+			};
+		
+			this.getTitle = function() {
+				return title;
+			};
+			this.setTitle = function(newTitle) {
+				title = newTitle || 'No title specified'; 
+			};
+		
+			this.getAuthor = function() {
+				return author;
+			};
+			this.setAuthor = function(newAuthor) {
+				author = newAuthor || 'No author specified';
+			};
+		
+			// Constructor code.
+			// Keep track of how many Books have been instantiated 
+			numOfBooks++;
+			// with the private static attribute.
+			if(numOfBooks > 50)
+				throw new Error('Book: Only 50 instances of Book can be created.');
+			this.setIsbn(newIsbn);
+			this.setTitle(newTitle);
+			this.setAuthor(newAuthor);
+		};
+	})();
+		
+	// Public static method.  
+	Book.convertToTitleCase = function(inputString) {
+		//...
+	};
+		
+	// Public, non-privileged methods. 
+	// 非特权函数是指不需要访问私有数据的公共方法
+	Book.prototype = {
+		display: function() {
+			show("", "isbn = " + this.getIsbn() + ", title = " + this.getTitle() + ", author = " + this.getAuthor());
+		}
+	};
+	
+	Book.prototype.constructor = Book;
+	try {
+		var theHobbit;
+		for(var i = 0; i < 60; i++)
+			theHobbit = new Book('0-395-07122-4-' + i, 'The Hobbit', 'J. R. R. Tolkien');
+	} catch (error) {
+		show("error", error);	//Error: Book: Only 50 instances of Book can be created.
+	}
+	theHobbit.display();	//isbn = 0-395-07122-4-49, title = The Hobbit, author = J. R. R. Tolkien
+	// ]]>
+	</script>
+  </body>
+</html>

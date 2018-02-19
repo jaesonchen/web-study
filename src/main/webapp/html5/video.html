@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+	<meta charset="utf-8">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <title>video.html</title>
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+  </head>
+  
+  <body>
+	<div id="checkVideoResult" style="margin:10px 0 0 0; border:0; padding:0;">
+	  <button onclick="checkVideo()" style="font-family:Arial, Helvetica, sans-serif;">Check</button>
+	</div>
+	<br />
+	<div style="text-align:center;">
+	  <button onclick="playPause()">播放/暂停</button> 
+	  <button onclick="makeBig()">大</button>
+	  <button onclick="makeNormal()">中</button>
+	  <button onclick="makeSmall()">小</button>
+	  <br />
+	  <video id="video1" width="320" height="240" style="margin-top:15px;" controls="controls">
+	    <source src="movie.mp4" type="video/mp4" />
+	    <source src="movie.ogg" type="video/ogg" />
+	    <source src="movie.webm" type="video/webm" />
+	    <object data="movie.mp4" width="320" height="240" />
+	    <embed src="movie.swf" width="320" height="240">
+	    Your browser does not support HTML5 video.
+	  </video>
+	  <br />
+	  <audio controls="controls">
+	    <source src="Adele - Rolling In The Deep.ogg" type="audio/ogg">
+	    <source src="Adele - Rolling In The Deep.mp3" type="audio/mpeg">
+		Your browser does not support the audio tag.
+	  </audio>
+	</div>
+	
+	<script type="text/javascript">
+	//检查浏览器支持的播放类型
+	function checkVideo() {
+		if(!!document.createElement('video').canPlayType) {
+			var vidTest = document.createElement("video");
+			oggTest = vidTest.canPlayType('video/ogg; codecs="theora, vorbis"');
+			if (!oggTest) {
+				h264Test = vidTest.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+				if (!h264Test) {
+					document.getElementById("checkVideoResult").innerHTML="Sorry. No video support."
+				} else {
+	      			if (h264Test == "probably") {
+						document.getElementById("checkVideoResult").innerHTML="Yes! Full support!";
+					} else {
+						document.getElementById("checkVideoResult").innerHTML="Well. Some support.";
+					}
+				}
+	    	} else {
+				if (oggTest=="probably") {
+					document.getElementById("checkVideoResult").innerHTML="Yes! Full support!";
+				} else {
+					document.getElementById("checkVideoResult").innerHTML="Well. Some support.";
+				}
+			}
+		} else {
+			document.getElementById("checkVideoResult").innerHTML="Sorry. No video support."
+		}
+	}
+	
+	var myVideo = document.getElementById("video1");
+
+	function playPause() { 
+		if (myVideo.paused) {
+			myVideo.play(); 
+		} else {
+			myVideo.pause();
+		}
+	}
+	
+	function makeBig() { 
+		myVideo.width = 400;
+		myVideo.volume = (myVideo.volume + 0.1) > 1 ? 1 : (myVideo.volume + 0.1);
+	} 
+	
+	function makeSmall() { 
+		myVideo.width = 320;
+		myVideo.volume = (myVideo.volume - 0.1) < 0 ? 0 : (myVideo.volume - 0.1);
+	} 
+	
+	function makeNormal() { 
+		myVideo.width = 240;
+		myVideo.volume = 0.5;
+	} 
+	
+	</script>
+  </body>
+</html>

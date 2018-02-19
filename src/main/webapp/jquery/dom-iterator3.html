@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>dom-iterator3.html</title>
+	
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	//缩写搜索元素的范围
+	//first(), last() 和 eq()，允许您基于其在一组元素中的位置来选择一个特定的元素。
+	//first() 	方法返回被选元素的首个元素。
+	//last() 	方法返回被选元素的最后一个元素。
+	//eq() 		方法返回被选元素中带有指定索引号的元素。索引号从 0 开始，因此首个元素的索引号是 0 而不是 1。
+	//filter() 	方法允许您规定一个标准。不匹配这个标准的元素会被从集合中删除，匹配的元素会被返回。
+	//not() 	方法返回不匹配标准的所有元素。
+	//$(selector).each(function(index,element))	为每个匹配元素规定运行的函数。
+	$(document).ready(function() {
+	
+		$("#button1").click(function(){
+			$("div p").first().css("background-color","yellow");
+		});
+	
+		$("#button2").click(function(){
+			$("div p").last().css("background-color","yellow");
+		});
+		
+		$("#button3").click(function(){
+			$("div p").eq(1).css("background-color","yellow");
+		});
+		
+		$("#button4").click(function(){
+			$("p").filter(".intro").css("background-color","yellow");
+		});
+		
+		$("#button5").click(function(){
+			$("p").not(".intro").css("background-color","yellow");
+		});
+		
+	});
+	</script>
+  </head>
+  
+  <body>
+	<h1>欢迎来到我的主页</h1>
+	<div>
+	<p>这是 div 中的一个段落。</p>
+	</div>
+	
+	<div>
+	<p>这是 div 中的另一个段落。</p>
+	</div>
+	
+	<p class="intro">这也是段落。</p>
+	
+	<button id="button1">first</button>
+	<button id="button2">last</button>
+	<button id="button3">eq</button>
+	<button id="button4">filter</button>
+	<button id="button5">not</button>
+  </body>
+</html>

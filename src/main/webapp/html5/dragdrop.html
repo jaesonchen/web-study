@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+	<meta charset="utf-8">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>dragdrop.html</title>
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<style type="text/css">
+	  #div1 {width:480px;height:240px;padding:10px;border:1px solid #aaaaaa;}
+	  #div2 {width:480px;height:240px;padding:10px;border:1px solid #aaaaaa;}
+	  #drag1 {width:200px;height:60px;padding:10px;border:1px solid #aaaaaa;}
+	  img {width:50px;height:40px;}
+	  .album {
+		border: 3px dashed #ccc;
+		float: left;
+		margin: 10px;
+		min-height: 100px;
+		padding: 10px;
+		width: 220px;
+	  }
+	</style>
+	<script type="text/javascript">
+	function allowDrop(ev) {
+		ev.stopPropagation();
+		ev.preventDefault();
+	}
+	
+	function drag(ev) {
+		ev.dataTransfer.setData("Text",ev.target.id);
+	}
+	
+	function drop(ev) {
+		ev.stopPropagation();
+		ev.preventDefault();
+		var data = ev.dataTransfer.getData("Text");
+		ev.target.appendChild(document.getElementById(data));
+	}
+	</script>
+  </head>
+  
+  <body>
+	<div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+	<div id="div2" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+	<div id="drag1" draggable="true" ondragstart="drag(event)">
+		<span>被拖放的DIV</span>
+	</div>
+	
+<div id="info">
+<h2>温馨提示：可将照片直接拖到垃圾箱中</h2>
+</div>
+<div id="album" class="album"  ondrop="drop(event)" ondragover="allowDrop(event)">
+<h2>相册</h2>
+<img draggable="true" id="img1" ondragstart="drag(event)" src="IMG_1.jpg" />
+<img draggable="true" id="img2" ondragstart="drag(event)" src="IMG_2.jpg" />
+<img draggable="true" id="img3" ondragstart="drag(event)" src="IMG_3.jpg" />
+</div>
+<div id="trash" class="album" ondrop="drop(event)" ondragover="allowDrop(event)">
+<h2>垃圾箱</h2>
+</div>
+  </body>
+</html>

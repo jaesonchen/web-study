@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>closure.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+	<div id="div"></div>
+	<script type="text/javascript">
+	// <![CDATA[
+	//如果你需要在没有硬编码的window标识符下访问全局对象，你可以在任何层级的函数作用域中做如下操作：
+	var global = (function () {
+		return this;
+	})();
+    function show(msg, data) {
+        $("#div").append($("<p></p>").text(msg + ": " + data));
+    }
+
+	//函数可以作为正常数据存在（例如：当参数传递，接受函数式参数或者以函数值返回）都称作第一类函数（一般说第一类对象）。
+	//在ECMAScript中，所有的函数都是第一类对象。
+		
+	//自由变量是指在函数中使用的，但既不是函数形式参数也不是函数的局部变量的变量
+	function testFun() {
+		//localVar属于自由变量，被innerFun引用。
+		var localVar = 10;	
+		function innerFun(innerParam) {
+			show("innerFun", innerParam + localVar);
+		}
+		return innerFun;
+	}
+	var someFun = testFun();
+	someFun(20); 	// 30
+	
+	//闭包是代码块和创建该代码块的上下文中数据的结合。
+	//ECMAScript只使用静态（词法）作用域：在创建时确定作用域
+	//ECMAScript中，闭包指的是：
+	//1.从理论角度：所有的函数。因为它们都在创建的时候就将上层上下文的数据保存起来了。
+	//  哪怕是简单的全局变量也是如此，因为函数中访问全局变量就相当于是在访问自由变量，这个时候使用最外层的作用域。
+	//2.从实践角度：以下函数才算是闭包：
+	// a.即使创建它的上下文已经销毁，它仍然存在（比如，内部函数从父函数中返回）
+	// b.在代码中引用了自由变量
+		
+	//ECMAScript闭包的实现
+	//因为作用域链，使得所有的函数都是闭包（与函数类型无关： 匿名函数，FE，NFE，FD都是闭包）。
+	//只有一类函数除外，那就是通过Function构造器创建的函数，因为其[[Scope]]只包含全局对象。
+	//在ECMAScript中，所有的函数都是闭包，因为它们都是在创建的时候就保存了上层上下文的作用域链
+	//（不管这个函数后续是否会激活 —— [[Scope]]在函数创建的时候就有了）
+	var x = 10;
+	function foo() {
+		show("x", x);
+	}
+	(function (funArg) {
+		var x = 20;
+		// 变量"x"在上下文中静态保存的，在函数foo创建的时候就保存了
+		funArg(); 	// 10, 而不是20
+	})(foo);
+		
+	//所有对象都引用一个[[Scope]]
+	//在ECMAScript中，同一个父上下文中创建的闭包是共用一个[[Scope]]属性的。
+	//也就是说，某个闭包对其中[[Scope]]的变量做修改会影响到其他闭包对其变量的读取：所有的内部函数都共享同一个父作用域
+	var firstClosure;
+	var secondClosure;
+	function funcClosure() {
+		var x = 1;
+		firstClosure = function () { return ++x; };
+		secondClosure = function () { return --x; };
+		x = 2; 	// 影响 AO["x"], 在2个闭包公有的[[Scope]]中
+	    show("firstClosure", firstClosure()); 	// 3, 通过第一个闭包的[[Scope]]
+    }
+	funcClosure();
+	show("firstClosure", firstClosure()); 	// 4
+	show("secondClosure", secondClosure()); 	// 3
+		
+	//开发人员在循环语句里创建函数（内部进行计数）的时候经常得不到预期的结果，而期望是每个函数都有自己的值。
+	var data = [];
+	for (var k = 0; k < 3; k++) {
+		data[k] = (function _helper(x) {
+			return function () {
+		      	show("x", x);
+		    };
+		})(k); 	// 传入"k"值
+	}
+	// 现在结果是正确的了
+	data[0](); // 0
+	data[1](); // 1
+	data[2](); // 2
+		
+	//创建封装的作用域来隐藏辅助对象：
+	var test = {};
+	// 初始化
+	(function (object) {
+		var x = 10;
+		object.getX = function _getX() {
+		    return x;
+		};
+	})(test);
+	show("getX", test.getX());	// 获得闭包 "x" – 10
+		
+	var test1 = {};
+	test1.getX = (function () {
+		var x = 20;
+		return function () {
+		    return x;
+		};
+	})();
+	show("getX", test1.getX());	//20
+	// ]]>
+	</script>
+  </body>
+</html>

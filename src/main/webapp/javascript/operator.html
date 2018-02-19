@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>advance-operator.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+	<a href="javascript:void(window.open('about:blank'))">Click me</a>
+	<div id="div"></div>
+    <script type="text/javascript">
+    // <![CDATA[
+    //如果你需要在没有硬编码的window标识符下访问全局对象，你可以在任何层级的函数作用域中做如下操作：
+    var global = (function () {
+        return this;
+    })();
+
+    function show(msg, data) {
+        $("#div").append($("<p></p>").text(msg + ": " + data));
+    }
+
+    //ECMAScript 一元运算符
+    //一元运算符只有一个参数，即要操作的对象或值。
+    //delete 运算符删除对以前定义的对象属性或方法的引用。
+    var oValue = new Object();
+    oValue.name = "object name";
+    show("before delete", oValue.name);
+    //删除了 name 属性，意味着强制解除对它的引用，将其设置为 undefined（即创建的未初始化的变量的值）。
+    delete oValue.name;
+    show("after delete", oValue.name);  //undefined
+        
+    //void 运算符对任何值返回 undefined。该运算符通常用于避免输出不应该输出的值。
+    //提示：请记住，没有返回值的函数真正返回的都是 undefined。
+        
+    //前增量/前减量运算符
+    //后增量/后减量运算符
+    //直接从 C（和 Java）借用的两个运算符是增量运算符和减量运算符。
+    var iNum = 10;
+    show("增量/减量运算符", [++iNum, --iNum, iNum++, iNum--]);     //11,10,10,11
+        
+    //一元加法和一元减法
+    //一元加法本质上对数字无任何影响,但对字符串却有有趣的效果，会把字符串转换成数字。
+    //一元减法就是对数值求负,一元减法运算符也会把字符串转换成近似的数字，此外还会对该值求负
+    var sNum = "20";
+    show("一元加法", [+iNum, +sNum, typeof +sNum]);     //10,20,number
+    show("一元减法", [-iNum, -sNum, typeof -sNum]);     //-10,-20,number
+        
+    //ECMAScript 位运算符
+    //位运算符是在数字底层（即表示数字的 32 个数位）进行操作的。
+    //有符号整数使用 31 位表示整数的数值，用第 32 位表示整数的符号，0 表示正数，1 表示负数。
+    //1.确定该数字的非负版本的二进制表示（例如，要计算 -18的二进制补码，首先要确定 18 的二进制表示）
+    //2.求得二进制反码，即要把 0 替换为 1，把 1 替换为 0
+    //3.在二进制反码上加 1
+    //在处理有符号整数时，开发者不能访问 31 位。
+    //为了简便，ECMAScript 用一种简单的方式处理整数，使得开发者不必关心它们的用法。
+    //注意：所有整数字面量都默认存储为有符号整数。只有 ECMAScript 的位运算符才能创建无符号整数。
+    show("位运算符", [iNum.toString(2)]);
+    iNum = -iNum;
+    show("位运算符", [iNum.toString(2)]);
+        
+    //位运算 NOT
+    //位运算 NOT 由否定号（~）表示，它是 ECMAScript 中为数不多的与二进制算术有关的运算符之一。
+    //位运算 NOT 是三步的处理过程：
+    //1.把运算数转换成 32 位数字
+    //2.把二进制数转换成它的二进制反码
+    //3.把二进制数转换成浮点数
+    //位运算 NOT 实质上是对数字求负，然后减 1
+    var iNum1 = 25;         //25 等于 00000000000000000000000000011001
+    var iNum2 = ~iNum1;     // 转换为 11111111111111111111111111100110
+    show("位运算 ~", [iNum2, iNum2.toString(2)]);
+        
+    //位运算 AND
+    //位运算 AND 由和号（&）表示，直接对数字的二进制形式进行运算。
+    //位运算 OR
+    //位运算 OR 由符号（|）表示，也是直接对数字的二进制形式进行运算。
+    //位运算 XOR
+    //位运算 XOR 由符号（^）表示，当然，也是直接对二进制形式进行运算。XOR 不同于 OR，当只有一个数位存放的是 1 时，它才返回 1。
+    //左移运算
+    //左移运算由两个小于号表示（<<）。它把数字中的所有数位向左移动指定的数量。
+    //注意：左移运算保留数字的符号位。
+    //有符号右移运算
+    //有符号右移运算符由两个大于号表示（>>）。它把 32 位数字中的所有数位整体右移，同时保留该数的符号（正号或负号）。有符号右移运算符恰好与左移运算相反。
+    //无符号右移运算
+    //无符号右移运算符由三个大于号（>>>）表示，它将无符号 32 位数的所有数位整体右移。对于正数，无符号右移运算的结果与有符号右移运算一样。
+    //无符号右移运算用 0 填充所有空位。对于正数，这与有符号右移运算的操作一样，而负数则被作为正数来处理。
+    //由于无符号右移运算的结果是一个 32 位的正数，所以负数的无符号右移运算得到的总是一个非常大的数字。
+    show("位运算& | ^ << >> >>>", [25 & 3, 25 | 3, 25 ^ 3, 2 << 5, 64 >> 5, 64 >>> 5, -64 >>> 0, -64 >>> 1]);
+        
+    //ECMAScript Boolean 运算符
+    //Boolean 运算符有三种：NOT(!)、AND(&&) 和 OR(||)。
+    //ECMAScript-262 v5 规范中描述的 Boolean 操作。
+    //Undefined==false、Null==false、Object==true、Number 如果参数为 +0, -0 或 NaN，则结果为 false；否则为 true。 
+    //String 如果参数为空字符串，则结果为 false；否则为 true。  Boolean 结果等于输入的参数（不转换） 。
+        
+    //逻辑运算符 NOT(!)
+    //NOT 运算符返回的一定是 Boolean 值。
+    //NOT 运算符的行为如下：
+    //•如果运算数是对象，返回 false
+    //•如果运算数是 0 以外的任何数字，返回 false
+    //•如果运算数是数字 0，返回 true
+    //•如果运算数是 null，返回 true
+    //•如果运算数是 NaN，返回 true
+    //•如果运算数是 undefined，返回 true
+    show("逻辑运算符 NOT", [!new Object, !10, !0, !null, !NaN, !undefined, !!new Object]);
+        
+    //逻辑运算符 AND(&&) 
+    //在 ECMAScript 中，AND 运算符用双和号（&&）表示：
+    //AND 运算的运算数可以是任何类型的，不止是 Boolean 值。
+    //AND 运算是短路运算，即如果第一个运算数决定了结果，就不再计算第二个运算数。
+    //当某个运算数不是原始的 Boolean 型值，逻辑 AND 运算并不一定返回 Boolean 值：
+    //•如果一个运算数是对象，另一个是 Boolean 值，返回第二个运算数。
+    //•如果两个运算数都是对象，返回第二个运算数。
+    //•如果某个运算数是 null，返回 null。
+    //•如果某个运算数是 NaN，返回 NaN。
+    //•如果某个运算数是 undefined，返回undefined。
+    show("逻辑运算符 AND", [true && null, true && NaN, true && undefined]);
+    show("逻辑运算符 AND", [false && undefined, false && undefinedVar, new String("101") && true, true && new String("101"), new Number(102) && new Number(103)]);
+        
+    //逻辑运算符 OR(||)
+    //在 ECMAScript 中， OR 运算符与 Java 中的相同，都由双竖线（||）表示：
+    //OR 运算也是短路运算。对于逻辑 OR 运算符来说，如果第一个运算数值为 true，就不再计算第二个运算数。
+    //与逻辑 AND 运算符相似，如果某个运算数不是 Boolean 值，逻辑 OR 运算并不一定返回 Boolean 值：
+    //•如果一个运算数是对象，并且该对象左边的运算数值均为 false，则返回该对象。
+    //•如果两个运算数都是对象，返回第一个对象。
+    //•如果最后一个运算数是 null，并且其他运算数值均为 false，则返回 null。
+    //•如果最后一个运算数是 NaN，并且其他运算数值均为 false，则返回 NaN。
+    //•如果最后一个运算数是 undefined，并且其他运算数值均为 false，则返回undefined 。
+    show("逻辑运算符 OR", [false || null, null || false, false || NaN, NaN || false, undefined || false, false || undefined]);
+    show("逻辑运算符 OR", [true || undefinedVar, true || new Number(100),  false || new Number(100), new Number(101) || new Number(102)]);
+        
+    //ECMAScript 加法运算符 +
+    //在 ECMAScript 中，加法运算符有大量的特殊行为。
+    //在处理特殊值时，ECMAScript 中的加法有一些特殊行为：
+    //•某个运算数是 NaN，那么结果为 NaN。
+    //•-Infinity 加 -Infinity，结果为 -Infinity。
+    //•Infinity 加 -Infinity，结果为 NaN。
+    //•+0 加 +0，结果为 +0。
+    //•-0 加 +0，结果为 +0。
+    //•-0 加 -0，结果为 -0。
+    //如果某个运算数是字符串，那么采用下列规则：
+    //•如果两个运算数都是字符串，把第二个字符串连接到第一个上。
+    //•如果只有一个运算数是字符串，把另一个运算数转换成字符串，结果是两个字符串连接成的字符串。
+    show("加法运算符 +", [100 + NaN, +0 + +0, +0 + -0, -0 + -0, 12 + "34"]);
+        
+    //ECMAScript 关系运算符
+    //关系运算符执行的是比较运算。每个关系运算符都返回一个布尔值Boolean。
+    //关系运算符小于、大于、小于等于和大于等于执行的是两个数的比较运算，比较方式与算术比较运算相同。
+    //对两个字符串应用关系运算符，它们的行为则不同。
+    //对于字符串，第一个字符串中每个字符的代码都与会第二个字符串中对应位置的字符的代码进行数值比较。
+    //大写字母的代码都小于小写字母的代码
+    show("关系运算符", ["Blue" < "alpha", "Blue".toLowerCase() < "alpha".toLowerCase()]);
+    //比较数字和字符串
+    //无论何时比较一个数字和一个字符串，ECMAScript 都会把字符串转换成数字，然后按照数字顺序比较它们。
+    //如果字符串不能转换成有意义的数字。返回的是 NaN(不会按照parseInt进行数字截取，而是判断整个字符串是否能够转换成数字)。
+    //根据规则，任何包含 NaN 的关系运算符都要返回 false。
+    //通常，如果小于运算的两个值返回 false，那么大于等于运算必须返回 true，不过如果某个数字是 NaN，情况则非如此。
+    show("比较数字和字符串", [parseInt("25a"), "25" > 3, "25a" < 3, "25a" > 3, "a" > 3, "a" < 3]);
+        
+    //ECMAScript 等性运算符
+    //ECMAScript 提供了两套等性运算符：等号(==)和非等号(!=)用于处理原始值，全等号(===)和非全等号(!==)用于处理对象。
+    //等号和非等号
+    //为确定两个运算数是否相等，这两个运算符都会进行类型转换。
+    //执行类型转换的规则如下：
+    //•如果一个运算数是 Boolean 值，在检查相等性之前，把它转换成数字值。false 转换成 0，true 为 1。
+    //•如果一个运算数是字符串，另一个是数字，在检查相等性之前，要尝试把字符串转换成数字。
+    //•如果一个运算数是对象，另一个是字符串，在检查相等性之前，要尝试把对象转换成字符串。
+    //•如果一个运算数是对象，另一个是数字，在检查相等性之前，要尝试把对象转换成数字。
+    //在比较时，该运算符还遵守下列规则：
+    //•值 null 和 undefined 相等。
+    //•在检查相等性时，不能把 null 和 undefined 转换成其他值。
+    //•如果某个运算数是 NaN，等号将返回 false，非等号将返回 true。
+    //•如果两个运算数都是对象，那么比较的是它们的引用值。如果两个运算数指向同一对象，那么等号返回 true，否则两个运算数不等。
+    //重要提示：即使两个数都是 NaN，等号仍然返回 false，因为根据规则，NaN 不等于 NaN。
+    var oValueObj = { valueOf: function () { return 10; }};
+    show("等性运算符", [true == 1, false == 0, "10" == 10, 
+                new Number(10) == 10, new String("hello") == "hello", oValueObj == 10, oValueObj == "10", 
+                true == 2, undefined == 0, oValueObj == new Number(10), new Object == new Object, 
+                NaN == NaN, null == NaN, 
+                null == undefined, null != NaN, NaN != NaN]);       
+    //true,true,true,true,true,true,true,false,false,false,false,false,false,true,true,true
+        
+    //全等号和非全等号
+    //等号和非等号的同类运算符是全等号和非全等号。这两个运算符所做的与等号和非等号相同，只是它们在检查相等性前，不执行类型转换。
+    //全等必须值和类型都相同，如果是引用类型，必须指向同一个对象。
+    show("全等号和非全等号", [true === 1, "10" === 10, new Number(10) === 10, new String("hello") === "hello", 
+                oValueObj === 10, oValueObj === new Number(10), new Object === new Object, new Number(10) === new Number(10), 
+                "hello" === "hello", 100 === 100, oValueObj === oValueObj]);        
+    //false,false,false,false,false,false,false,false,true,true,true
+        
+    //ECMAScript 条件运算符
+    //variable = boolean_expression ? true_value : false_value;
+    //用逗号运算符可以在一条语句中执行多个运算。
+    //var iNum1 = 1, iNum2 = 2, iNum3 = 3;
+    // ]]>
+    </script>
+  </body>
+</html>

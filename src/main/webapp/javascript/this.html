@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>this.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+	<div id="div"></div>
+	<script type="text/javascript">
+	// <![CDATA[
+    //如果你需要在没有硬编码的window标识符下访问全局对象，你可以在任何层级的函数作用域中做如下操作：
+	var global = (function () {
+		return this;
+	})();
+		
+	function show(msg, data) {
+		$("#div").append($("<p></p>").text(msg + ": " + data));
+	}
+
+	//JavaScript 有一套完全不同于其它语言的对 this 的处理机制。 
+	//在五种不同的情况下 ，this的指向各不相同。 
+	
+	//1、全局范围内: 当在全局范围内使用 this，它将会指向全局对象global
+	//浏览器中运行的 JavaScript 脚本，这个全局对象的属性是global.window = global = window
+	show("global", global);	//[object Window]
+		
+	//2、直接调用函数:这里 this 会指向全局对象。 
+	//ES5 注意: 在严格模式下（strict mode），不存在全局变量。 这种情况下 this 将会是 undefined。 
+	//function声明时相当于为全局添加了一个类型为Function的属性global.funName = function() {}
+	function Test(name) {
+		this.name = name;
+		this.getName = function() {
+			return this.name;
+		};
+	}
+	//这里相当于调用global.Test("jaeson")，this指向global，为global增加了两个成员变量。
+	Test("jaeson");
+	show("global.name", global.name);  //jaeson
+	show("getName()", getName());	   //jaeson
+		
+	//3、点号(.)方法调用:指向调用函数的对象。
+	//new相当于声明了global.test1 = {name : "coolrice", getName : function() { return this.name; }}
+	var test1 = new Test("coolrice");
+	//这里this指向test1对象
+	show("test1.getName()", test1.getName());	//coolrice
+		
+	//4、调用构造函数:如果函数倾向于和 new 关键词一块使用，则我们称这个函数是构造函数。 在函数内部，this指向新创建的对象。
+	//5、显式的设置 this: 当使用 Function.prototype 上的 call 或者 apply 方法时，函数内的 this 将会被显式设置为函数调用的第一个参数。 
+	function Foo() {
+		this.name = "foo";
+		this.show = function() {
+			show("foo.show()", this.name);
+		};
+	}
+	function Bar() {
+		this.name = "bar";
+		this.show = function() {
+			show("bar.show()", this.name);
+		};
+	}
+	var foo1 = new Foo();
+    var bar1 = new Bar();
+    //this指向foo1
+    foo1.show();			//foo.show=foo
+    //this指向foo1
+    bar1.show.call(foo1);	//bar.show=foo
+		
+    //注意: 在对象的字面声明语法中，this 不能用来指向对象本身。 因此 var obj = {me: this} 中的 me 不会指向 obj，
+    //因为 this 只可能出现在上述的五种情况中。这个例子中，如果是在浏览器中运行，obj.me 等于 global 对象。 
+    var obj = {me: this};
+    show("obj.this", obj.me);	//[object Window]
+		
+	//常见误解:
+	//尽管大部分的情况都说的过去，不过第二个规则（就是直接调用函数时，this 指向全局对象global）
+	//被认为是JavaScript语言另一个错误设计的地方，因为它从来就没有实际的用途。 
+	function TestMethod(name) {
+		function method(name) {
+			// this 将会被设置为全局对象（浏览器环境中也就是 window 对象）
+			this.username = name;
+		}
+		method(name);				
+	}
+	TestMethod.prototype.username="value from prototype";
+	TestMethod("chenzq");
+	show("global.username", global.username);		//chenzq
+	var method = new TestMethod("jaesonchen");
+	//从原型链中获得值
+	show("method.username", method.username);	    //value from prototype
+	show("global.username", global.username);		//jaesonchen
+		
+	//一个常见的误解是 method 中的 this 将会指向 TestMethod 对象，实际上不是这样子的。 
+	//为了在 method 中获取对 TestMethod 对象的引用，我们需要在 method 函数内部创建一个局部变量that指向 TestMethod 对象。 
+	//that这个名字被广泛的用来指向外部的 this 对象。 在 闭包 中，经常可以看到 that 可以作为参数传递。
+	function TestThat(name) {
+		var that = this;
+		function method(name) {
+		    // 使用 that 来指向 TestThat的对象
+            that.namethat = name;
+        }
+	    method(name);				
+	}
+    TestThat("name that");
+    show("global.namethat", global.namethat);	//name that	
+	//这里this指向testt对象
+	var that = new TestThat("new that");
+	show("global.namethat", global.namethat);  //name that
+	show("that.namethat", that.namethat);	//new that	
+	
+	//另一个看起来奇怪的地方是函数别名，也就是将一个方法赋值给一个变量。 
+	function TestAlias(name) {
+		this.aliasName = name;
+		this.getAliasName = function() {
+			return this.aliasName;
+		};
+	}
+	var alias = new TestAlias("alias");
+	show("alias.getAliasName()", alias.getAliasName());			//alias
+	
+	//func 就像一个普通的函数被调用；因此，函数内的 this 将不再被指向到 alias 对象，而是global对象。
+	//相当于global.func = function() { return this.aliasName; }
+	var func = alias.getAliasName;
+	show("func()", func());	//undefined
+		
+    //对于函数作为参数传递导致的this指针丢失的问题，很多框架都已经有方法解决了。
+    //Prototype的解决方案——传参之前使用bind方法将函数封装起来，并返回封装后的对象
+	function bind() {
+    	if (arguments.length < 2 && arguments[0] === undefined) 
+       		return this;
+    	var __method = this, args = $A(arguments), object = args.shift();
+   		return function() {
+   		   return __method.apply(object, args.concat($A(arguments)));
+    	};
+	}	
+	// ]]>
+	</script>
+  </body>
+</html>

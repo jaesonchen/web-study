@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>prototype.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+	<div id="div"></div>
+	<script type="text/javascript">
+    // <![CDATA[
+		
+    //如果你需要在没有硬编码的window标识符下访问全局对象，你可以在任何层级的函数作用域中做如下操作：
+    var global = (function () {
+        return this;
+    })();
+		
+	function show(msg, data) {
+	    $("#div").append($("<p></p>").text(msg + ": " + data));
+	}
+	
+	//新创建对象的原型是从当前时刻构造函数的prototype属性获取的，这意味着同一个构造函数创建的两个对象的原型可以不同；
+	//这是因为构造函数的prototype属性也可以不同。
+	//ClassName.funcName声明的是static函数
+	function BaseClass() {
+		this.name = "BaseClassName";
+		this.showMsg = function() {
+			show("BaseClass::showMsg", this.name);   
+		};
+		this.baseShowMsg = function() {
+			show("BaseClass::baseShowMsg", this.name);
+		};
+	}
+    function ExtendClass() {
+        this.name = "ExtendClassName";
+        this.showMsg = function () {
+            show("ExtendClass::showMsg", this.name);
+        };
+    }
+	//static 函数
+	BaseClass.showMsg = function() {
+		show("BaseClass::showMsg::static", this.name);
+	};
+	ExtendClass.showMsg = function() {
+		show("ExtendClass::showMsg::static", this.name);
+	};
+	
+	//constructor指向构造函数
+	show("before set prototype", ExtendClass.prototype.constructor);
+	//通过prototype实现继承
+	ExtendClass.prototype = new BaseClass();
+	//constructor指向原型对象的构造函数
+	show("after set prototype", ExtendClass.prototype.constructor);
+	//需要重新设置constructor
+	ExtendClass.prototype.constructor = ExtendClass;
+		
+	var instance = new ExtendClass();
+	instance.showMsg(); 		//ExtendClass::showMsg::ExtendClassName
+	//相当于instance.__proto__.baseShowMsg() this指向instance
+	instance.baseShowMsg(); 	//BaseClass::baseShowMsg::ExtendClassName
+	
+	//调用super的方法
+	ExtendClass.prototype.showMsg();					//BaseClass::showMsg::BaseClassName
+	//调用super方法，绑定为当前对象
+	ExtendClass.prototype.showMsg.call(instance);		//BaseClass::showMsg::ExtendClassName
+	
+	//Object 对象的原型默认是Object.prototype
+    show("Object.__proto__", new Object().__proto__);
+    show("new Object().__proto__ == Object.prototype", new Object().__proto__ == Object.prototype);
+	//构造函数BaseClass.__proto__是Function.prototype
+	show("BaseClass.__proto__", BaseClass.__proto__);
+	show("BaseClass.__proto__ == Function.prototype", BaseClass.__proto__ == Function.prototype);	//true
+	
+	//static方法的this指向fuction本身，fuction构造函数本身是Function的实例
+	BaseClass.showMsg();		//BaseClass::showMsg::static:BaseClass
+	ExtendClass.showMsg();		//ExtendClass::showMsg::static:ExtendClass
+	show("func.name", ExtendClass.name);
+	//创建对象之后修改构造函数的原型对象(不是替换)，指向的还是同一个原型对象，则所有修改前后创建的对象都指向修改后的原型对象。
+	ExtendClass.prototype.baseShowMsg = function() { show("prototype::baseShowMsg", this.name); };
+	instance.baseShowMsg();		//prototype::baseShowMsg:ExtendClassName
+	
+	//遍历原型的属性和方法
+	for(var property in ExtendClass.prototype) {
+		show(property, ExtendClass.prototype[property]);
+	}
+
+	//创建对象之后替换构造函数的prototype，已创建的对象继续指向原来的prototype对象，此时修改前后的对象的__proto__不再是同一个对象。
+	ExtendClass.prototype = new BaseClass();
+	var instance1 = new ExtendClass();
+	//替换原型对象
+	ExtendClass.prototype = {id : "json", baseShowMsg : function() { show("json::baseShowMsg", this.id); }};
+	show("before replace instance1.id", instance1.id);				//undefined
+	instance1.baseShowMsg();		//BaseClass::baseShowMsg::ExtendClassName
+	//instance2指向新的原型对象
+	var instance2 = new ExtendClass();
+	show("after replace instance2.id", instance2.id);		 //json
+	instance2.baseShowMsg();		         //json::baseShowMsg
+		
+	//对象独立于构造函数,构造函数完成了自己的主要工作（创建对象）以后可以删除。原型对象通过引用__proto__属性继续存在
+	ExtendClass.prototype = new BaseClass();
+	var instance3 = new ExtendClass();
+	show("before add property instance3.id", instance3.id);				//undefined
+	//为原型对象增加属性
+	ExtendClass.prototype.id = "new id";	
+	ExtendClass.prototype.func = function() { show("new.func() invoked", this.id); };
+	show("after add property instance3.id", instance3.id);				//new id
+	instance3.func();				//new.func() invoked
+			
+	//instanceof操作符是和原型链一起工作的，而不是构造函数
+	ExtendClass.prototype = new BaseClass();
+	var instance4 = new ExtendClass();
+	show("instanceof", [instance4 instanceof BaseClass, instance4 instanceof ExtendClass]);	//true,true
+	ExtendClass.prototype.id = "new id";
+	show("instanceof", instance4 instanceof BaseClass);	//true
+	ExtendClass.prototype = {id : "json", baseShowMsg : function() { show("json::baseShowMsg", this.id); }};
+	show("instanceof", instance4 instanceof BaseClass);	//true
+	//instance4是ExtendClass创建的对象，instanceof是比较prototype是否在同一个原型链上
+	show("instanceof", instance4 instanceof ExtendClass);	//false
+	var instance5 = new ExtendClass();
+	show("instanceof", [instance5 instanceof BaseClass, instance5 instanceof ExtendClass]);	//false,true
+		
+	//Object.prototype.hasOwnProperty(attr):判断一个对象是否包含自定义属性而不是原型链上的属性
+	function Foo() {
+		this.value = "foo";
+		this.method = function() {};
+	}
+	Foo.prototype = {
+		name : "proto value",
+	};
+	var foo = new Foo();
+	show("hasOwnProperty", foo.hasOwnProperty("value"));	//true
+	show("hasOwnProperty", foo.hasOwnProperty("name"));   //true
+	show("hasOwnProperty", foo.hasOwnProperty("method"));	//false
+		
+	//JavaScript 不会保护 hasOwnProperty 被非法占用，因此如果一个对象碰巧存在这个属性，就需要使用外部的 hasOwnProperty 函数来获取正确的结果。
+	show("Object.prototype.hasOwnProperty", Object.prototype.hasOwnProperty.call(foo, "method"));	//true
+
+	// ]]>
+	</script>
+  </body>
+</html>

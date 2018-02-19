@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>css-method.html</title>
+	
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	//css() 方法设置或返回被选元素的一个或多个样式属性。
+	$(document).ready(function(){
+		$("#button1").click(function(){
+			//返回首个匹配元素的 background-color 值
+    		alert("Background color = " + $("p").css("background-color"));
+  		});
+  		$("#button2").click(function(){
+			$("p").css("background-color","yellow");
+  		});
+  		$("#button3").click(function(){
+			$("p").css({"background-color":"yellow","font-size":"200%"});
+  		});
+  		
+		
+	});
+	</script>
+  </head>
+  
+  <body>
+	<h2>这是标题</h2>
+	<p style="background-color:#ff0000">这是一个段落。</p>
+	<p style="background-color:#00ff00">这是一个段落。</p>
+	<p style="background-color:#0000ff">这是一个段落。</p>
+	<button id="button1">返回 p 元素的背景色</button>
+	<button id="button2">设置 p 元素的背景色</button>
+	<button id="button3">为 p 元素设置多个样式</button>
+  </body>
+</html>

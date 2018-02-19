@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ajax.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+	<button id="bt1">get</button>
+	<button id="bt2">post</button>
+	<div id="div"></div>
+    <script type="text/javascript">
+    // <![CDATA[
+    //如果你需要在没有硬编码的window标识符下访问全局对象，你可以在任何层级的函数作用域中做如下操作：
+    var global = (function () {
+        return this;
+    })();
+    
+    function show(msg, data) {
+        $("#div").append($("<p></p>").text(msg + ": " + data));
+    }
+        
+    //XMLHttpRequest 用于在后台与服务器交换数据。这意味着可以在不重新加载整个网页的情况下，对网页的某部分进行更新。
+    var xmlhttp;
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp = new XMLHttpRequest();
+    } else {
+        // code for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    
+    //如需将请求发送到服务器，我们使用 XMLHttpRequest 对象的 open() 和 send() 方法：
+    //open(method, url, async):规定请求的类型、URL 以及是否异步处理请求。
+    //method：请求的类型；GET 或 POST
+    //url：文件在服务器上的位置
+    //async：true（异步）或 false（同步）
+    //send(data): 将请求发送到服务器
+    //data：仅用于 POST 请求
+        
+    //GET 还是 POST？
+    //与 POST 相比，GET 更简单也更快，并且在大部分情况下都能用。
+    //然而，在以下情况中，请使用 POST 请求：
+    //无法使用缓存文件（更新服务器上的文件或数据库）
+    //向服务器发送大量数据（POST 没有数据量限制）
+    //发送包含未知字符的用户输入时，POST 比 GET 更稳定也更可靠
+        
+    //服务器响应
+    //如需获得来自服务器的响应，请使用 XMLHttpRequest 对象的 responseText 或 responseXML 属性。
+    //responseText 获得字符串形式的响应数据。 
+    //responseXML 获得 XML 形式的响应数据。 
+        
+    //onreadystatechange 事件
+    //当请求被发送到服务器时，我们需要执行一些基于响应的任务。
+    //每当 readyState 改变时，就会触发 onreadystatechange 事件。
+    //readyState 属性存有 XMLHttpRequest 的状态信息。
+        
+    //下面是 XMLHttpRequest 对象的三个重要的属性：
+    //onreadystatechange 响应函数（或函数名），每当 readyState 属性改变时，就会调用该函数。 
+    //readyState存有 XMLHttpRequest 的状态。从 0 到 4 发生变化。
+    //注释：onreadystatechange 事件被触发 5 次（0 - 4），对应着 readyState 的每个变化。
+    //•0: 请求未初始化
+    //•1: 服务器连接已建立
+    //•2: 请求已接收
+    //•3: 请求处理中
+    //•4: 请求已完成，且响应已就绪
+    //status
+    //200: "OK"
+    //404: 未找到页面
+ 
+    //GET 请求
+    function Ajax_Get(xmlhttp, url) {
+            
+        xmlhttp.onreadystatechange = function() {
+            show("onreadystatechange", "readyState=" + xmlhttp.readyState);
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                show("responseText", xmlhttp.responseText);
+                show("getAllResponseHeaders", xmlhttp.getAllResponseHeaders());
+                show("getResponseHeader", xmlhttp.getResponseHeader("Content-Type"));
+            }
+        };
+        //为了避免得到缓存的结果，可以向url添加唯一的id
+        var str = "";
+        if (url.indexOf("?") >=0 ) {
+            str += "&unique_id=" + Math.random();
+        } else {
+            str += "?unique_id=" + Math.random();
+        }
+        xmlhttp.open("GET", url + str, true);
+        xmlhttp.send();
+    }
+        
+    //POST 请求
+    //如果需要像 HTML 表单那样 POST 数据，请使用 setRequestHeader() 来添加 HTTP 头。
+    //然后在 send() 方法中规定您希望发送的数据：
+    function Ajax_Post(xmlhttp, url, data) {
+            
+        xmlhttp.onreadystatechange = function() {
+            show("onreadystatechange", "readyState=" + xmlhttp.readyState);
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                show("responseText", xmlhttp.responseText);
+                show("getAllResponseHeaders", xmlhttp.getAllResponseHeaders());
+                show("getResponseHeader", xmlhttp.getResponseHeader("Content-Type"));
+            }
+        };
+        xmlhttp.open("POST", url, true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send(data);
+    }
+        
+    $("#bt1").click(function () {
+        Ajax_Get(xmlhttp, "/js/ajax.txt");
+    });
+    $("#bt2").click(function () {
+        Ajax_Post(xmlhttp, "/ajax/post", "id=1001&name=chenzq");
+    });
+    // ]]>
+    </script>	
+  </body>
+</html>

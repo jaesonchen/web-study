@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>event.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+  	<button id="mybutton">click</button>
+  	<button id="detach">detach click</button>
+	<div id="div"></div>
+	<script type="text/javascript">
+	// <![CDATA[
+	
+    function show(msg, data) {
+        $("#div").append($("<p></p>").text(msg + ": " + data));
+    }
+		
+    //DOM和JavaScript语言是2个单独的东西，浏览器事件是DOM API的一部分，而不是JavaScript的一部分。
+    //鼠标事件
+    //1. mousedown	– 鼠标设备按下一个元素的时候触发mousedown事件。
+    //2. mouseup 	– 鼠标设备从按下的元素上弹起的时候触发mouseup事件。
+    //3. click 		– 鼠标点击元素的时候触发click事件。
+    //4. dblclick	– 鼠标双击元素的时候触发dblclick事件。
+    //5. mouseover 	– 鼠标移动到某元素上的时候触发mouseover事件。
+    //6. mouseout 	– 鼠标从某元素离开的时候触发mouseout事件。
+    //7. mousemove 	– 鼠标在某元素上移动但未离开的时候触发mousemove事件。
+				
+    //键盘事件
+    //1.keypress 	– 按键按下的时候触发该事件。
+    //2.keydown 	– 按键按下的时候触发该事件，并且在keypress事件之前。
+    //3.keyup 	    – 按键松开的时候触发该事件，在keydown和keypress事件之后。
+				
+    //表单事件
+    //1.select 	    – 文本字段（input, textarea等）的文本被选择的时候触发该事件。
+    //2.change 	    – 控件失去input焦点的时候触发该事件（或者值被改变的时候）。
+    //3.submit 	    – 表单提交的时候触发该事件。
+    //4.reset 	    – 表单重置的时候触发该事件。
+    //5.focus 	    – 元素获得焦点的时候触发该事件，通常来自鼠标设备或Tab导航。
+    //6.blur 		– 元素失去焦点的时候触发该事件，通常来自鼠标设备或Tab导航。
+				
+    //其它事件
+    //1.load 		– 页面加载完毕（包括内容、图片、frame、object）的时候触发该事件。
+    //2.resize 	    – 页面大小改变的时候触发该事件（例如浏览器缩放）。
+    //3.scroll 	    – 页面滚动的时候触发该事件。
+    //4.unload 	    – 从页面或frame删除所有内容的时候触发该事件（例如离开一个页面）。
+
+    //事件处理
+    var myElement = document.getElementById("mybutton");
+    //事件处理句柄:
+    function buttonClick() {
+        show("event", "You just clicked the button!");
+    }
+
+    //W3C模型和微软模型
+    function addEvent(target, name, fn) {
+        if (target.addEventListener) {
+            target.addEventListener(name, fn, false);
+        } else if (target.attachEvent) {
+			target.attachEvent("on" + name, fn);
+		} else {
+			target["on" + name] = fn;
+		}
+	}
+    //删除事件绑定
+	function removeEvent(target, name, fn) {
+		if (target.removeEventListener) {
+			target.removeEventListener(name, fn, false);
+		} else if (target.detachEvent) {
+			target.detachEvent("on" + type, fn);
+		} else {
+			target["on" + name] = null;
+		}
+	}
+    // 注册事件
+    addEvent(myElement, "click", buttonClick);
+    // jquery
+	$("#detach").click(function () {
+		removeEvent(myElement, "click", buttonClick);
+	});
+				
+	//当事件发生的时候触发某个函数，该Event对象将自动在函数内可用，该对象包含了很多事件触发时候的信息，
+	//但IE却没有这么实现，而是自己实现的，IE浏览器是通过全局对象window下的event属性来包含这些信息
+	function myEventHandler(e) {
+		// 注意参数e
+    	// 该函数调用的时候e是event对象（W3C实现）
+
+    	// 兼容IE的代码 
+    	// 现在e就可以兼容各种浏览器了	
+		e = e || window.event;
+	
+		// 防止默认行为
+		if (e.preventDefault) {
+			// W3C实现
+			e.preventDefault();
+		} else {
+			// IE实现
+			e.returnValue = false;
+		}
+
+		// 防止默认行为
+		if (e.stopPropagation) {
+			// W3C实现
+			e.stopPropagation();
+		} else {
+			// IE实现
+			e.cancelBubble = true;
+		}
+	}
+	// ]]>
+	</script>
+  </body>
+</html>

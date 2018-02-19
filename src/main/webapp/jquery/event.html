@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>event.html</title>
+	
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	//jQuery 名称冲突
+	//jQuery 使用 $ 符号作为 jQuery 的简介方式。
+	//其他 JavaScript 库中的函数（比如 Prototype）同样使用 $ 符号。
+	//jQuery 使用名为 noConflict() 的方法来解决该问题。
+	//var jq=jQuery.noConflict()，帮助您使用自己的名称（比如 jq）来代替 $ 符号。
+	//由于 jQuery 是为处理 HTML 事件而特别设计的，那么当您遵循以下原则时，您的代码会更恰当且更易维护：
+	//•把所有 jQuery 代码置于事件处理函数中
+	//•把所有事件处理函数置于文档就绪事件处理器中
+	//•把 jQuery 代码置于单独的 .js 文件中
+	//•如果存在名称冲突，则重命名 jQuery 库
+	//如果你的 jQuery 代码块使用 $ 简写，并且您不愿意改变这个快捷方式，那么您可以把 $ 符号作为变量传递给 ready 方法。
+	//这样就可以在函数内使用 $ 符号了 - 而在函数外，依旧不得不使用 "jQuery"
+	
+	//$(document).ready(function)		将函数绑定到文档的就绪事件（当文档完成加载时） 
+	//$(selector).click(function) 		触发或将函数绑定到被选元素的点击事件 
+	//$(selector).dblclick(function)	触发或将函数绑定到被选元素的双击事件 
+	//$(selector).focus(function) 		触发或将函数绑定到被选元素的获得焦点事件 
+	//$(selector).blur(function)		触发或将函数绑定到被选元素的失去焦点事件 
+	//$(selector).keypress(function)	触发、或将函数绑定到指定元素的 key press 事件
+	//$(selector).keydown(function)		触发、或将函数绑定到指定元素的 key down 事件
+	//$(selector).keyup(function)		触发、或将函数绑定到指定元素的 key up 事件
+	//$(selector).mouseover(function) 	当鼠标指针位于元素上方时，会发生 mouseover 事件。与 mouseenter 事件不同，不论鼠标指针穿过被选元素或其子元素，都会触发 mouseover 事件。
+	//$(selector).mouseout(function)	当鼠标指针从元素上移开时，发生 mouseout 事件。与 mouseleave 事件不同，不论鼠标指针离开被选元素或其子元素，都会触发 mouseout 事件。
+	//$(selector).mouseenter(function)	当鼠标指针穿过元素时，会发生 mouseenter 事件。
+	//$(selector).mouseleave(function)	当鼠标指针离开元素时，会发生 mouseleave 事件。
+	//$(selector).mousedown(function)	当鼠标指针移动到元素上方，并按下鼠标按键时，会发生 mousedown 事件。mousedown 事件仅需要按键被按下，而不需要松开即可发生。
+	//$(selector).mouseup(function)		当在元素上放松鼠标按钮时，会发生 mouseup 事件。当鼠标指针位于元素上方时，放松鼠标按钮就会触发该事件。
+	//$(selector).mousemove(function)	当鼠标指针在指定的元素中移动时，就会发生 mousemove 事件。注意：用户把鼠标移动一个像素，就会发生一次 mousemove 事件。
+	//$(selector).resize(function)		当调整浏览器窗口的大小时，发生 resize 事件。
+	//$(selector).scroll(function)		当用户滚动指定的元素时，会发生 scroll 事件。
+	//$(selector).select(function)		当 textarea 或文本类型的 input 元素中的文本被选择时，会发生 select 事件。
+	//$(selector).change(function)		该事件仅适用于文本域（text field），以及 textarea 和 select 元素。
+	//$(selector).toggle(fun1(),fun2(),...)	用于绑定两个或多个事件处理器函数，以响应被选元素的轮流的 click 事件。
+	//$(selector).trigger(event)		触发被选元素的指定事件类型。
+	//event.pageX/event.pageY			相对于文档左边缘/上边缘的鼠标位置。
+	//event.target						显示哪个 DOM 元素触发了事件。
+	//event.preventDefault()			阻止元素发生默认的行为。
+	//$(selector).bind(event,data,function)		为被选元素添加一个或多个事件处理程序，并规定事件发生时运行的函数。
+	//$(selector).bind({event:function, event:function, ...})规定事件映射，其中包含一个或多个添加到元素的事件，以及当事件发生时运行的函数。
+	//$(selector).unbind(event,function)移除被选元素的事件处理程序。不指定参数删除所有事件函数。
+	//$(selector).submit(function)		当提交表单时，会发生 submit 事件。
+	$.noConflict();
+	jQuery(document).ready(function($){
+	  	$("button").click(function(){
+	    	$("p").text("jQuery 仍在运行！");
+	  	});
+	});
+	</script>
+  </head>
+  
+  <body>
+    <p>这是一个段落。</p>
+	<button>测试 jQuery</button>
+  </body>
+</html>

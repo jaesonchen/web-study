@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>oop.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+	<div id="div"></div>
+	<script type="text/javascript">
+	// <![CDATA[
+	//如果你需要在没有硬编码的window标识符下访问全局对象，你可以在任何层级的函数作用域中做如下操作：
+	var global = (function () {
+		return this;
+	})();
+    function show(msg, data) {
+        $("#div").append($("<p></p>").text(msg + ": " + data));
+    }
+
+	//在 ECMAScript 中，所有对象并非同等创建的。
+	//一般来说，可以创建并使用的对象有三种：本地对象、内置对象和宿主对象。
+	
+	//ECMA-262 把本地对象（native object）定义为“独立于宿主环境的 ECMAScript 实现提供的对象”。
+	//•Object
+	//•Function
+	//•Array
+	//•String
+	//•Boolean
+	//•Number
+	//•Date
+	//•RegExp
+	//•Error
+	//•EvalError
+	//•RangeError
+	//•ReferenceError
+	//•SyntaxError
+	//•TypeError
+	//•URIError
+	
+	//ECMA-262 把内置对象（built-in object）定义为“由 ECMAScript 实现提供的、独立于宿主环境的所有对象，在 ECMAScript 程序开始执行时出现”。
+	//这意味着开发者不必明确实例化内置对象，它已被实例化了。ECMA-262 只定义了两个内置对象，即 Global 和 Math （它们也是本地对象，根据定义，每个内置对象都是本地对象）。
+	//所有非本地对象都是宿主对象（host object），即由 ECMAScript 实现的宿主环境提供的对象。
+	//所有 BOM 和 DOM 对象都是宿主对象。
+	
+	//ECMAScript是一种面向对象语言，支持基于原型的委托式继承。
+		
+	//多态
+	//一个函数可以应用于不同的对象，就像原生对象的特性（因为这个值在进入执行上下文时确定的）：
+	function test() {
+		show("[this.a, this.b]", [this.a, this.b]);
+	}
+	test.call({a: 10, b: 20}); 			// 10, 20
+	test.call({a: 100, b: 200});		// 100, 200
+		
+	//封装
+	//在JavaScript里通过在变量前加下划线来达到“private”和“protected”数据的目的（但这只是命名规范）。
+	//通过函数的静态作用域链特性来持有局部变量，以实现封装
+	function ObjectA() {
+		// "private" a
+		var _a; 
+		this.getA = function _getA() {
+		    return _a;
+		  };
+		this.setA = function _setA(a) {
+		    _a = a;
+		  };
+	}
+	var obj1 = new ObjectA();
+	obj1.setA(10);
+	show("a", obj1._a); 		// undefined
+	show("getA", obj1.getA()); 	// 10
+	
+	var obj2 = new ObjectA();
+	obj2.setA(20);
+	show("getA", [obj1.getA(), obj2.getA()]);	//10, 20
+		
+	//多重继承
+	// helper for augmentation
+	Object.extend = function (destination, source) {
+		for (property in source)
+		  	if (source.hasOwnProperty(property))
+		    	destination[property] = source[property];
+		return destination;
+	};	
+	var X = {a: 10, b: 20};
+	var Y = {c: 30, d: 40};
+	Object.extend(X, Y); 				// mix Y into X
+	show("Object.extend", [X.a, X.b, X.c, X.d]); 		//10, 20, 30, 40
+		
+	//数据类型
+	//标准规范里定义了9种数据类型，但只有6种是在ECMAScript程序里可以直接访问的,它们是：Undefined、Null、Boolean、String、Number、Object。
+	//另外3种类型只能在实现级别访问（ECMAScript对象是不能使用这些类型的）并用于规范来解释一些操作行为、保存中间值。
+	//这3种类型是：Reference、List和Completion。
+	//Reference是用来解释delete、typeof、this这样的操作符，并且包含一个基对象和一个属性名称。
+	//List描述的是参数列表的行为（在new表达式和函数调用的时候）。
+	//Completion是用来解释行为break、continue、return和throw语句的。
+		
+	//ES5规范规定，静态对象不能扩展新的属性，并且它的属性页不能删除或者修改。他们是所谓的冻结对象，可以通过应用Object.freeze(o)方法得到。
+	var foo = {x: 10};
+	// 冻结对象
+	Object.freeze(foo);
+	show("Object.freeze", Object.isFrozen(foo)); // true
+	// 不能修改
+	foo.x = 100;
+	// 不能扩展
+	foo.y = 200;
+	// 不能删除
+	delete foo.x;
+	show("Object.freeze", [foo.x, foo.y]); 		//[10, undefined]
+		
+	//在ES5规范里，也使用Object.preventExtensions(o)方法防止扩展，或者使用Object.defineProperty(o)方法来定义属性：
+	var bar = {x : 10};
+	Object.defineProperty(bar, "y", {
+		value: 20,
+		writable: false, // 只读
+		configurable: false // 不可配置
+	});
+	// 不能修改
+	bar.y = 200;
+	// 不能删除
+	delete bar.y; // false
+	// 防止扩展
+	Object.preventExtensions(bar);
+	show("Object.isExtensible", Object.isExtensible(bar)); // false
+	// 不能添加新属性
+	bar.z = 30;
+	show("Object.defineProperty", [bar.x, bar.y]); 	//{x: 10, y: 20}
+	show("Object.preventExtensions", bar.z);		//undefined
+		
+	//属性的特性
+	//所有的属性（property） 都可以有很多特性（attributes）。
+	//1.{ReadOnly}——忽略向属性赋值的写操作尝试，但只读属性可以由宿主环境行为改变——也就是说不是“恒定值” ;
+	//2.{DontEnum}——属性不能被for..in循环枚举
+	//3.{DontDelete}——delete操作符的行为被忽略（即删不掉）;
+	//4.{Internal}——内部属性，没有名字（仅在实现层面使用），ECMAScript里无法访问这样的属性。
+	//注意，在ES5里{ReadOnly}，{DontEnum}和{DontDelete}被重新命名为[[Writable]]，[[Enumerable]]和[[Configurable]]，
+	//可以手工通过Object.defineProperty或类似的方法来管理这些属性。
+	var fooAttr = {};
+	Object.defineProperty(fooAttr, "x", {
+		value: 10,
+		writable: true, 		// 即{ReadOnly} = false
+		enumerable: false, 		// 即{DontEnum} = true
+		configurable: true 		// 即{DontDelete} = false
+	});
+	// 通过descriptor获取特性集attributes
+	var desc = Object.getOwnPropertyDescriptor(fooAttr, "x");
+	show("getOwnPropertyDescriptor", [desc.enumerable, desc.writable]); 		// [false, true]
+	
+	//对象转换valueOf
+	//将对象转化成原始值可以用valueOf方法，如果不用new关键字就是将对象转化成原始值，就相当于隐式的valueOf方法调用：
+	var aaa = new Number(1);
+	var primitiveA = Number(aaa); 			// 隐式"valueOf"调用
+	var alsoPrimitiveA = aaa.valueOf(); 	// 显式调用
+	show("valueOf", [
+			typeof aaa, 					// "object"
+			typeof primitiveA, 				// "number"
+			typeof alsoPrimitiveA 			// "number"
+	]);
+	//valueOf的默认值会根据对象的类型改变（如果不被覆盖的话）
+	var bbb = new Number(1);
+	var ccc = new Number(2);
+	show("valueOf", bbb + ccc); 	// 3
+	// 甚至
+	var ddd = {
+		x: 10,
+		y: 20,
+		valueOf: function () {
+			return this.x + this.y;
+		}
+	};
+	var eee = {
+		x: 30,
+		y: 40,
+		// 和ccc的valueOf功能一样
+		valueOf: ddd.valueOf
+	};
+	show("valueOf", ddd + eee); 	// 100
+		
+	//构造函数是一个函数，用来创建并初始化新创建的对象。
+	//对象创建（内存分配）是由构造函数的内部方法[[Construct]]负责的。该内部方法的行为是定义好的，所有的构造函数都是使用该方法来为新对象分配内存的。
+	//而初始化是通过新建对象上调用该函数来管理的，这是由构造函数的内部方法[[Call]]来负责任的。
+	//内部方法[[Construct]]是通过使用带new运算符的构造函数来激活的。
+		
+	//instanceof操作符的特性
+	//我们是通过构造函数的prototype属性来显式引用原型的，这和instanceof操作符有关。该操作符是和原型链一起工作的，而不是构造函数。
+	//所有instanceof运算符只需要一个对象属性——obj.[[Prototype]]，在原型链中从Object.prototype开始检查其是否存在。
+	//instanceof运算符是通过构造函数里的内部方法[[HasInstance]]来激活的。
+	function ClassB() { }
+	function ClassC() { }
+	var objb = new ClassB();
+	var __proto = {};
+	ClassC.prototype = __proto;
+	objb.__proto__ = __proto;
+	show("instanceof", [objb instanceof ClassC, objb instanceof ClassB]); 	// true,false
+	
+	//下面的模板可以封装成一个非常方便的工具函数，其目的是连接原型的时候不是根据构造函数的实际名称。
+	function inherit(child, parent) {
+		var F = function () {};
+		F.prototype = parent.prototype;
+		child.prototype = new F();
+		child.prototype.constructor = child;
+		child.superproto = parent.prototype;
+		return child;
+	}
+	//把中间的构造函数放到外面，就可以优化前面的代码（因此，只有一个函数被创建），然后重用它：
+	var inherit = (function() {
+		function F() {}
+		return function (child, parent) {
+		    F.prototype = parent.prototype;
+		    child.prototype = new F;
+		    child.prototype.constructor = child;
+		   	child.superproto = parent.prototype;
+		   	return child;
+		};
+	})();
+	//ES5为原型链标准化了这个工具函数，那就是Object.create方法。
+	Object.create = Object.create || function (parent, properties) {
+		function F() {}
+		F.prototype = parent;
+		var child = new F;
+		for (var k in properties) {
+			child[k] = properties[k].value;
+		}
+		return child;
+	};
+		
+	// 用法
+	var fooparent = {x: 10};
+	var barcreate = Object.create(fooparent, {y: {value: 20}});
+	show("Object.create", [barcreate.x, barcreate.y]); // 10, 20
+	// ]]>
+	</script>
+  </body>
+</html>

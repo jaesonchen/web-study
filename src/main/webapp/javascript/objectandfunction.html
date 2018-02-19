@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>objectandfunction.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  <body>
+  	<div id="div"></div>
+	<script type="text/javascript">
+	// <![CDATA[
+	//如果你需要在没有硬编码的window标识符下访问全局对象，你可以在任何层级的函数作用域中做如下操作：
+	var global = (function () {
+		return this;
+	})();
+	function show(msg, data) {
+	    $("#div").append($("<p></p>").text(msg + ": " + data));
+	}
+	
+	//JSON 文本转换为 JavaScript 对象
+	//JSON 最常见的用法之一，是从 web 服务器上读取 JSON 数据（作为文件或作为 HttpRequest），将 JSON 数据转换为 JavaScript 对象，然后在网页中使用该数据。
+	//JSON 解析器
+	//由于 JSON 语法是 JavaScript 语法的子集，JavaScript 函数 eval() 可用于将 JSON 文本转换为 JavaScript 对象。
+	//eval() 函数使用的是 JavaScript 编译器，可解析 JSON 文本，然后生成 JavaScript 对象。必须把文本包围在括号中，这样才能避免语法错误：
+	//var obj = eval ("(" + txt + ")");
+	//eval() 函数可编译并执行任何 JavaScript 代码。这隐藏了一个潜在的安全问题。
+	//使用 JSON 解析器将 JSON 转换为 JavaScript 对象是更安全的做法。JSON 解析器只能识别 JSON 文本，而不会编译脚本。
+	var jsontxt = '{"employees":[' +
+			'{"firstName":"Bill","lastName":"Gates" },' +
+			'{"firstName":"George","lastName":"Bush" },' +
+			'{"firstName":"Thomas","lastName":"Carter" }]}';
+	var jsonobj = JSON.parse(jsontxt);
+	show("JSON.parse", [jsonobj.employees[0].firstName, jsonobj.employees[0].lastName]);	//Bill,Gates
+		
+	//javascript 变量和函数名称是大小写敏感的
+	function CaseSensitive() {}
+	try {
+		caseSensitive();
+	} catch (error) {
+		show("error", error);	//ReferenceError: caseSensitive is not defined
+	}
+		
+	//函数上下文中的变量对象VO
+	//形式参数和arguments对象指向相同的变量
+	//未传递进来的形参和arguments[]为undefined，修改时不会互相影响
+	//模拟函数重载:用 arguments 对象判断传递给函数的参数个数，即可模拟函数重载
+	function foo(x, y, z) {
+		// 声明的函数参数数量arguments (x, y, z)
+		show("声明的函数参数数量:", foo.length); 			// 3
+		// 真正传进来的参数个数(only x, y)
+		show("真正传进来的参数个数:", arguments.length);	// 2
+		// 参数的callee是函数自身
+		show("arguments.callee === foo", arguments.callee === foo); // true
+	    // 参数共享
+        show("x === arguments[0]", x === arguments[0]); 		// true
+        show("x", x);						// 10
+        //参数同步
+        arguments[0] = 20;
+        show("x", x); 						// 20
+        x = 30;
+        show("arguments[0]", arguments[0]); 			// 30
+        // 不过，没有传进来的参数z，和参数的第3个索引值是不共享的
+        z = 40;
+        show("arguments[2]", arguments[2]); 			// undefined
+        arguments[2] = 50;
+        show("z", z); 						// 40
+    }
+	foo(10, 20);
+		
+	//函数声明（缩写为FD）是这样一种函数：
+	//1.有一个特定的名称
+	//2.在源码中的位置：要么处于程序级（Program level），要么处于其它函数的主体（FunctionBody）中
+	//3.在进入上下文阶段创建
+	//4.影响变量对象VO
+	//这种函数类型的主要特点在于它们仅仅影响变量对象（即存储在上下文的VO中的变量对象）。
+	function funcDefine() {
+		//  ...
+	}
+		
+	//函数表达式（缩写为FE）是这样一种函数：
+	//1.在源码中须出现在表达式的位置
+	//2.有可选的名称
+	//3.不会影响变量对象
+	//4.在代码执行阶段创建
+	//这种函数类型的主要特点在于它在源码中总是处在表达式的位置。
+	var funcEx = function () {};
+	//自执行函数表达式
+	(function () {
+		show("fe", "hello world");
+	})();
+		
+	//当函数表达式FE有一个名称（称为命名函数表达式，缩写为NFE）时，将会出现一个重要的特点。
+	//从定义中我们知道函数表达式不会影响一个上下文的变量对象VO
+	//（那样意味着既不可能通过名称在函数声明之前调用它，也不可能在声明之后调用它）。
+	//但是，FE在递归调用中可以通过名称调用自身(匿名时可以通过callee递归)。
+	var nfe = function testNFE() {};
+	try {
+		testNFE();		//未定义
+	} catch(error) {
+		show("error", error);	//ReferenceError: testNFE is not defined
+	}
+	var varNFE = function funNFE() {
+		show([arguments.callee === varNFE, arguments.callee === funNFE]);
+	};
+	varNFE(); 	// [true, true]
+		
+	//通过函数构造器Function创建的函数
+	//既然这种函数对象也有自己的特色，我们将它与FD和FE区分开来。
+	//其主要特点在于这种函数的[[Scope]]属性仅包含全局对象：
+	var z = 10;
+	function newFunc() {
+		var z = 20;
+		var y = 30;
+		var bar = new Function('show("z", z); show("y", y);');
+		try{
+		  	bar(); 	
+		} catch (error) { show("error", error); }
+	}
+	newFunc();	// 10, "y" 未定义
+	
+	//变量对象VO：
+	//任何时候，变量只能通过使用var关键字才能声明。
+	//隐式声明仅仅是给全局对象创建了一个新属性(但它不是变量)。
+	//关于变量，还有一个重要的知识点。变量相对于简单属性来说，变量有一个特性(attribute)：{DontDelete},
+	//这个特性的含义就是不能用delete操作符直接删除变量属性。
+	show("x", x);			//function x() {}
+	var x = 10;
+	show("x", x);			//10
+	function x() {}
+	x = 20;
+	show("x", x);			//20
+	//var 定义的变量不能删除
+	delete x;
+	show("after delete x", x);			//20
+	//global.y简单属性可以删除
+	y = 100;
+	delete y;
+	try {
+		show("after delete y", y);
+	} catch (error) {
+		show("after delete", error);	//ReferenceError: y is not defined
+	}
+		
+	var foo = {x: 10};
+	var bar = {
+		x: 20,
+		test: function () {
+		   	show("this === bar", this === bar);
+		   	show("this.x", this.x);
+		}
+	};
+	bar.test();		// true, 20
+	foo.test = bar.test;
+	// 这里this指向foo
+	// 尽管调用的是相同的function
+	foo.test(); 	// false, 10
+	
+	//基本类型可以像对象类型一样使用，包括访问其属性、对其属性赋值(尽管实际上不起作用，但是形式上可以)。
+	//之所以能这样去使用基本类型，是因为JavaScript引擎内部在处理对某个基本类型 a进行形如a.sth的操作时，
+	//会在内部临时创建一个对应的包装类型(对数字类型来说就是Number类型)的临时对象，并把对基本类型的操作代理到对这个临时对象身上，
+	//使得对基本类型的属性访问看起来像对象一样。但是在操作完成后，临时对象就扔掉了，下次再访问时，会重新建立临时对象，当然对之前的临时对象的修改都不会有效了。
+	var temp = 10;
+	temp.prop = 20;
+	//prop 属性丢失 undefined
+	show("temp", temp.prop + temp);	//NaN
+		
+	var tempStr = 'hello ';
+	tempStr.prop = 'world';
+	show("tempStr", tempStr + tempStr.prop);	//hello undefined
+
+	var oNum = new Number(10);
+	oNum.prop = 20;
+	show("oNum", oNum.prop + oNum);	//30
+	
+	var func = function() {};
+	func.prop = 'hello ';
+	show("func", func.prop + func);	//hello function () {}
+	// ]]>
+	</script>
+  </head>
+  </body>
+</html>

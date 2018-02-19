@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <title>html5.html</title>
+    
+    <!-- Internet Explorer 8 及更早 IE 版本的浏览器的兼容
+    	html5shiv主要解决HTML5提出的新的元素不被IE6-8识别，这些新元素不能作为父节点包裹子元素，并且不能应用CSS样式。 -->
+    <!--[if lt IE 9]>
+	  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+    
+    <!-- 向 HTML 添加的新的元素，并为该元素定义样式 -->
+	<script>document.createElement("myElement")</script>
+	<style>
+	myElement {
+		display: block;
+		background-color: #ddd;
+		padding: 50px;
+		font-size: 30px;
+	} 
+	</style> 
+  </head>
+  
+  <body>
+	<h1>我的第一个标题</h1>
+	 
+	<p>我的第一个段落。</p>
+	 
+	<myElement>我的第一个新元素</myElement>
+	
+	<article>菜鸟教程 —— 学的不仅是技术，更是梦想！！！</article>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+
+    <title>test.html</title>
+    
+	<script type="text/javascript">
+	//检查浏览器支持的播放类型
+	function checkVideo() {
+		if(!!document.createElement('video').canPlayType) {
+			var vidTest = document.createElement("video");
+			oggTest = vidTest.canPlayType('video/ogg; codecs="theora, vorbis"');
+			if (!oggTest) {
+				h264Test = vidTest.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+				if (!h264Test) {
+					document.getElementById("checkVideoResult").innerHTML="Sorry. No video support."
+				} else {
+	      			if (h264Test == "probably") {
+						document.getElementById("checkVideoResult").innerHTML="Yes! Full support!";
+					} else {
+						document.getElementById("checkVideoResult").innerHTML="Well. Some support.";
+					}
+				}
+	    	} else {
+				if (oggTest=="probably") {
+					document.getElementById("checkVideoResult").innerHTML="Yes! Full support!";
+				} else {
+					document.getElementById("checkVideoResult").innerHTML="Well. Some support.";
+				}
+			}
+		} else {
+			document.getElementById("checkVideoResult").innerHTML="Sorry. No video support."
+		}
+	}
+	</script>
+
+  </head>
+  
+  <body>
+	<div id="checkVideoResult" style="margin:10px 0 0 0; border:0; padding:0;">
+		<button onclick="checkVideo()" style="font-family:Arial, Helvetica, sans-serif;">Check</button>
+	</div>
+  
+	<video width="320" height="240" controls="controls">
+		<source src="movie.ogg" type="video/ogg">
+		<source src="movie.mp4" type="video/mp4">
+		Your browser does not support the video tag.
+	</video>
+  </body>
+</html>

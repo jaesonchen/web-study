@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>dom-iterator1.html</title>
+	
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+	<script type="text/javascript">
+	//在 DOM 树中水平遍历
+	//•siblings()	返回被选元素的所有同胞元素。可以使用可选参数来过滤对同胞元素的搜索。
+	//•next()		返回被选元素的下一个同胞元素。
+	//•nextAll()	返回被选元素的所有跟随的同胞元素。
+	//•nextUntil()	返回介于两个给定参数之间的所有跟随的同胞元素。
+	//•prev()		与上面的方法类似，方向相反：它们返回的是前面的同胞元素。
+	//•prevAll()
+	//•prevUntil()
+	$(document).ready(function() {
+	
+		$("#button1").click(function(){
+			$("h2").siblings().css({"color":"red","border":"2px solid red"});
+		});
+		
+		$("#button2").click(function(){
+			$("h2").siblings("p.2").css({"color":"red","border":"2px solid red"});
+		});
+		
+		$("#button3").click(function(){
+			$("h2").next().css({"color":"red","border":"2px solid red"});
+		});
+		
+		$("#button4").click(function(){
+			$("h2").nextAll().css({"color":"red","border":"2px solid red"});
+		});
+		
+		$("#button5").click(function(){
+			$("h2").nextUntil("h6").css({"color":"red","border":"2px solid red"});
+		});
+		
+		$("#button6").click(function(){
+			$("h2").prev().css({"color":"red","border":"2px solid red"});
+		});
+		
+	});
+	</script>
+	<style>
+	.siblings * { 
+		display: block;
+		border: 2px solid lightgrey;
+		color: lightgrey;
+		padding: 5px;
+		margin: 15px;
+	}
+	</style>
+  </head>
+  
+  <body class="siblings">
+	<div>div (父)
+	  <p class="1">p</p>
+	  <span>span</span>
+	  <h2>h2</h2>
+	  <h3>h3</h3>
+	  <p class="2">p</p>
+	  <h4>h4</h4>
+	  <h5>h5</h5>
+	  <h6>h6</h6>
+	</div>
+	<button id="button1">siblings</button>
+	<button id="button2">siblings(element)</button>
+	<button id="button3">next</button>
+	<button id="button4">nextAll</button>
+	<button id="button5">nextUntil</button>
+	<button id="button6">pre</button>
+  </body>
+
+</html>

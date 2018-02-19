@@ -1,0 +1,282 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>highqualitycode.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+	<div id="div"></div>
+	<script type="text/javascript">
+	// <![CDATA[
+    function show(msg, data) {
+        $("#div").append($("<p></p>").text(msg + ": " + data));
+    }
+
+	//最小全局变量(Minimizing Globals):
+	//JavaScript通过函数管理作用域。在函数内部声明的变量只在这个函数内部有效，函数外面不可用。
+	//另一方面，全局变量就是在函数外面声明的或是任何未声明直接简单使用的。
+	//在任何地方使用未声明的变量属于隐式全局变量，自动成为global的一个属性，隐式全局变量可以delete，var声明的变量不能删除。
+	//每个JavaScript环境有一个全局对象，你创建的每一个全局变量都成了这个全局对象的属性。
+	//在浏览器中，方便起见，该全局对象有个附加属性叫做window，此window(通常)指向该全局对象本身。
+	
+	//全局变量的问题在于，你的JavaScript应用程序和web页面上的所有代码都共享了这些全局变量，他们住在同一个全局命名空间，
+	//所以当程序的两个不同部分定义同名但不同作用的全局变量的时候，命名冲突在所难免。
+		
+	//由于JavaScript的两个特征，不自觉地创建出全局变量是出乎意料的容易。
+	//首先，你可以甚至不需要声明就可以使用变量。
+	//其次，JavaScript有隐含的全局概念，意味着你不声明的任何变量都会成为一个全局对象属性。
+	function sum(x, y) {
+		// 不推荐写法: 隐式全局变量 
+		//result = x + y;
+		//正确写法
+		var result = x + y;
+		return result;
+	}
+	//另一个创建隐式全局变量的反例就是使用任务链进行部分var声明。
+	function foo() {
+		//a是本地变量但是b确是全局变量
+		//var a = b = 0;
+		//使用链分配是比较好的做法，不会产生任何意料之外的全局变量
+		var a, b;
+		a = b = 0;
+	}
+		
+	//忘记var的副作用(Side Effects When Forgetting var):
+	//隐式全局变量和明确定义的全局变量间有些小的差异，就是通过delete操作符让变量未定义的能力。
+	//通过var创建的全局变量（任何函数之外的程序中创建）是不能被删除的。
+	//没有var创建的隐式全局变量（无视是否在函数中创建）是能被删除的。
+	//在ES5严格模式下，未声明的变量工作时会抛出一个错误。
+	//定义三个全局变量
+	var global_var = 1;
+	global_novar = 2; 			// 反面教材
+	(function () {
+		global_fromfunc = 3; 	// 反面教材
+	})();
+	//试图删除
+	show("delete", [delete global_var, delete global_novar, delete global_fromfunc])
+	//测试该删除
+	show("after delete", [typeof global_var, typeof global_novar, typeof global_fromfunc]); 		// number,undefined,undefined
+	
+	//访问全局对象(Access to the Global Object):
+	//在浏览器中，全局对象可以通过window属性在代码的任何位置访问。
+	//但是在其他环境下，这个方便的属性可能被叫做其他什么东西。
+	//如果你需要在没有硬编码的window标识符下访问全局对象，你可以在任何层级的函数作用域中做如下操作：
+	var global = (function () {
+		return this;
+	})();
+	show("global", global);	//[object Window]
+		
+	//单var形式（Single var Pattern）:
+	//在函数顶部使用单var语句是比较有用的一种形式，其好处在于：
+	//提供了一个单一的地方去寻找功能所需要的所有局部变量
+	//防止变量在定义之前使用的逻辑错误
+	//帮助你记住声明的全局变量
+	//减少代码
+	//您可以使用一个var语句声明多个变量，并以逗号分隔。像这种初始化变量同时初始化值的做法是很好的。
+	//这样子可以防止逻辑错误（所有未初始化但声明的变量的初始值是undefined）和增加代码的可读性。
+	function func() {
+		var a = 1,
+			b = 2,
+			sum = a + b,
+			myobject = {};
+		// function body...
+	}
+		
+	//预解析：var散布的问题(Hoisting: A Problem with Scattered vars)
+	//JavaScript中，你可以在函数的任何位置声明多个var语句，并且它们就好像是在函数顶部声明一样发挥作用。
+	//这种行为称为 hoisting（悬置/置顶解析/预解析）。当你使用了一个变量，然后不久在函数中又重新声明的话，就可能产生逻辑错误。
+	//对于JavaScript，只要你的变量是在同一个作用域中（同一函数），它都被当做是声明的，即使是它在var声明前使用的时候。
+	//代码处理分两个阶段：
+	//第一阶段是变量，函数声明，以及正常格式的参数创建，这是一个解析和进入上下文的阶段。
+	//第二个阶段是代码执行，函数表达式和不合格的标识符（未声明的变量）被创建。
+	//反例
+	show("noDefine", global.noDefine); //undefined
+	try {
+		//未使用var声明的变量不能在赋值前直接使用
+		show("myname", myname);
+	} catch (error) {
+		show("error", error);
+	}
+	//赋值时才会成为全局对象的一个属性
+	myname = "global";		// 全局属性
+	show("myname", myname);
+	function funcTest() {
+		//这里myname调用的是后面声明的局部变量
+		show("myname", myname); 		// "undefined"
+		var myname = "local";
+		show("myname", myname); 		// "local"
+	}
+	funcTest();
+    
+	//javascript中的false、0、null、undefined和空字符串对象
+	//类型:false是布尔类型对象，0是数字类型对象，空字符串是字符串类型对象，null是object对象，undefined类型还是undefined。
+	show("typeof", [typeof(false) === "boolean", typeof(0) === "number", typeof(null) === "object", 
+					typeof("") === "string", typeof(undefined) === "undefined"]);		//true,true,true,true,true
+					
+	//互等性:当你用==操作符将false对象和其他对象进行比较的时候，你会发现，只有0和空字符串等于false；
+	//undefined和null对象并不等于false对象，而null和undefined是相等的
+	show("==", [false == undefined, false == null, 
+				false == 0, false == "", "" == 0, 
+				"" == null, "" == undefined, 
+				null == undefined]);			//false,false,true,true,true,false,false,true
+					
+	//我们可以把0、空字符串和false归为一类，称为“假值”；把null和undefined归为一类，称为“空值”。
+	//假值还算一个有效的对象，因此可以对其使用toString等类型相关的方法，而空值则不行会抛出异常。
+	try {
+		undefined.toString();
+		null.toString();
+	} catch (error) {
+		show("error", error);	//TypeError: Cannot read property 'toString' of undefined
+	}
+		
+	//字符串表示:虽然空值不能调用toString方法，但是却可以使用String构造函数进行构造。
+	//像decodeURI这样的函数，如果传入的是undefined或者null，返回的是“undefined”和“null”字符串。
+	show("", [String(false), String(""), String(0), 
+				String(undefined), String(null), 
+				decodeURI(undefined), decodeURI(null)]);	//false,,0,undefined,null,undefined,null
+					
+	//假值和空值作为if条件分支:假值和空值有一个共性，那就是在作为if的条件分支时，均被视为false；应用“!”操作之后得到的均为true。
+	//这是因为，这几个对象均被视为各自类型中的无效值或空值。因此if分支中这些对象均被视为false对待。
+	var arr = [undefined, false, 0, "", null];
+	looper(arr);	//null,,0,false,undefined
+	
+	//null和undefined的区别:undefined和null对象无非是两个特殊对象，undefined表示无效对象，null表示空对象。
+	//如果变量显式或者隐式（由Javascript引擎进行赋值）地被赋予了undefined，那么代表了此变量未被初始化，
+	//如果被赋予null值，则代表此变量被初始化为空值。
+	//在Javascript中，变量是通过var声明，=赋值符进行定义（初始化变量所指向的对象）。
+	//变量如果声明了但是没有初始化，那么Javascript引擎会将此变量自动指向undefined对象。
+	show("null and undefined", [1 + undefined, 1 + null]);	//NaN,1
+		
+	//for循环(for Loops):在for循环中，你可以循环取得数组或是数组类似对象的值
+	function looper(myarray) {
+		//这种形式的循环的不足在于每次循环的时候都要去获取数组的长度。
+		//这会降低你的代码，尤其当myarray不是数组，而是一个HTMLCollection对象的时候。
+		//for (var i = 0; i < myarray.length; i++) { }
+		//缓存数组(或集合)的长度是比较好的形式
+		//for (var i = 0, max = myarray.length; i < max; i++) { }
+		//更有效率的做法
+		//向下数到0，通常更快，因为和0做比较要比和数组长度或是其他不是0的东西作比较更有效率
+		var str = "";
+		for (var i = myarray.length; i--;) {
+		   	if(!myarray[i])
+		   		str += myarray[i] + ",";
+		}
+		show("result desc", str);
+	}
+		
+	//for-in循环(for-in Loops):
+	//for-in循环应该用在非数组对象的遍历上，使用for-in进行循环也被称为“枚举”。
+	//从技术上将，你可以使用for-in循环数组（因为JavaScript中数组也是对象），但这是不推荐的。
+	//因为如果数组对象已被自定义的功能增强，就可能发生逻辑错误。另外，在for-in中，属性列表的顺序（序列）是不能保证的。
+	//所以最好数组使用正常的for循环，对象使用for-in循环。
+		
+	//有个很重要的hasOwnProperty()方法，当遍历对象属性的时候可以过滤掉从原型链上下来的属性。
+	var man = {
+		hands: 2,
+		legs: 2,
+		heads: 1
+	};
+	// 在代码的某个地方
+	// 一个方法添加给了所有对象
+	if (typeof Object.prototype.clone === "undefined") {
+		Object.prototype.clone = function () {};
+	}
+	//在man定义完成后的某个地方，在对象原型上增加了一个很有用的名叫 clone()的方法。
+	//此原型链是实时的，这就意味着所有的对象自动可以访问新的方法。
+	//为了避免枚举man的时候出现clone()方法，你需要应用hasOwnProperty()方法过滤原型属性。
+	//如果不做过滤，会导致clone()函数显示出来，在大多数情况下这是不希望出现的。
+	// for-in 循环
+	var forResult = [];
+	for (var i in man) {
+		if (man.hasOwnProperty(i)) { 	// 过滤
+			//另一种使用方法
+			//if (Object.prototype.hasOwnProperty.call(man, i)) { // 过滤
+			forResult.push(i);
+		}
+	}
+	show("for in", forResult);	//hands,legs,heads
+		
+	//避免(Avoiding) eval():此方法接受任意的字符串，并当作JavaScript代码来处理。
+	//如果代码是在运行时动态生成，有一个更好的方式不使用eval而达到同样的目标。
+	var obj = {
+		name: "obj.name"
+	};
+	var property = "name";
+	// 反面示例
+	show("eval", eval("obj." + property));	//obj.name
+	// 更好的
+	show("obj[property]", obj[property]);	//obj.name
+		
+	//使用eval()也带来了安全隐患，因为被执行的代码（例如从网络来）可能已被篡改。
+	//使用新的Function()构造类似于eval()，应小心接近。这可能是一个强大的构造，但往往被误用。
+	//如果你觉得必须使用eval()，你可以考虑使用new Function()代替。
+	//有一个小的潜在好处，因为在新Function()中代码是在局部函数作用域中运行，
+	//所以代码中任何通过var 定义的变量都不会自动变成全局变量。
+	//另一种方法来阻止自动全局变量是封装eval()调用到一个即时函数中。
+	//un成为全局变量
+	var jsstring = "var un = 1;";
+	eval(jsstring);
+	//deux局部变量
+	jsstring = "var deux = 2;";
+	new Function(jsstring)();
+	//trois局部变量
+	jsstring = "var trois = 3;";
+	(function () {
+		eval(jsstring);
+	})();
+	show("eval", [typeof un, typeof deux, typeof trois]); 	//number,undefined,undefined
+		
+	//左花括号的位置(Opening Brace Location):总是使用花括号，并始终把在与之前的语句放在同一行。
+	//因为分号插入机制(semicolon insertion mechanism)——JavaScript是不挑剔的，当你选择不使用分号结束一行代码时JavaScript会自己帮你补上。
+	// 警告： 意外的返回值
+	function funcBad() {
+		return
+		// 下面代码不执行，javascript会自动补上分号return;
+		{
+			name : "Batman"
+		};
+	}
+	show("funcBad", funcBad());			//undefined
+	//正确的做法
+	function funcGood() {
+		return {
+			name : "Batman"
+		};
+	}
+	show("funcGood", funcGood());		//{name: "Batman"}
+		
+	//空格(White Space):空格的使用同样有助于改善代码的可读性和一致性。
+	//for循环分号分开后的的部分：如for (var i = 0; i < 10; i += 1) {...}
+	//for循环中初始化的多变量(i和max)：for (var i = 0, max = 10; i < max; i += 1) {...}
+	//分隔数组项的逗号的后面：var a = [1, 2, 3];
+	//对象属性逗号的后面以及分隔属性名和属性值的冒号的后面：var o = {a: 1, b: 2};
+	//限定函数参数：myFunc(a, b, c)
+	//函数声明的花括号的前面：function myFunc() {}
+	//匿名函数表达式function的后面：var myFunc = function () {};
+	//使用空格分开所有的操作符和操作对象是另一个不错的使用。
+		
+	//命名规范(Naming Conventions):
+	//另一种方法让你的代码更具可预测性和可维护性是采用命名规范。这就意味着你需要用同一种形式给你的变量和函数命名。
+	//以大写字母写构造函数(Capitalizing Constructors)
+	//因为构造函数仍仅仅是函数，仅看函数名就可以帮助告诉你这应该是一个构造函数还是一个正常的函数。
+	//命名构造函数时首字母大写具有暗示作用，使用小写命名的函数和方法不应该使用new调用。
+		
+	//有时，开发人员使用命名规范来弥补或替代语言特性。
+	//JavaScript中没有定义常量的方法，所以开发者都采用全部单词大写的规范来命名这个程序生命周期中都不会改变的变量。
+	
+	//另外一个完全大写的惯例：全局变量名字全部大写。全部大写命名全局变量可以加强减小全局变量数量的实践，同时让它们易于区分。
+	//另外一种使用规范来模拟功能的是私有成员。
+	//虽然可以在JavaScript中实现真正的私有，但是开发者发现仅仅使用一个下划线前缀（_）来表示一个私有属性或方法会更容易些。
+	// ]]>
+	</script>
+  </body>
+</html>

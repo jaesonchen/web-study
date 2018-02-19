@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>scope.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+	<div id="div"></div>
+	<script type="text/javascript">
+    // <![CDATA[
+    //如果你需要在没有硬编码的window标识符下访问全局对象，你可以在任何层级的函数作用域中做如下操作：
+    var global = (function () {
+        return this;
+    })();
+		
+	function show(msg, data) {
+	    $("#div").append($("<p></p>").text(msg + ": " + data));
+	}
+	
+    //执行上下文和作用域:
+    //执行上下文（execution context）是javascript中最为重要的一个概念。执行上下文定义了变量或函数有权访问的其他数据，决定了它们各自的行为。
+    //每个执行上下文都有一个与之关联的变量对象（variable object），上下文中定义的所有变量和函数都保存在这个对象中。
+    //虽然我们编写的代码无法访问这个对象，但是解析器在处理数据时会在后台使用它。 
+	
+    //全局执行上下文是最外围的一个执行上下文。根据ECMAScript实现所在的宿主不同，表示执行上下文的对象也不一样。
+    //在Web浏览器中，全局执行上下文被认为是window对象，因为所有全局变量和函数都是作为window对象的属性和方法创建的。
+    //某个执行上下文中的所有代码执行完毕后，该上下文被销毁，保存在其中的所有变量和函数定义也随之销毁
+    //（全局执行上下文直到应用程序退出-例如关闭网页或浏览器时才会被销毁）。 
+		
+    //局部执行上下文，每个函数都有自己的执行上下文。当执行流进入一个函数时，函数的上下文就会被推入一个上下文栈中。
+    //而在函数执行完后，栈将方法的执行上下文弹出，把控制权返回给之前的执行上下文。ECMASript实现，程序中的执行流正是由这个方便的机制控制着。 
+		
+    //ECMAScript 只有公用作用域
+    //ECMAScript 中的所有对象的所有属性和方法都是公用的。
+    //当代码在一个上下文中执行时，会创建变量对象(VO)的一个作用域链（scope chain）。
+    //作用域链的用途，是保障对执行上下文有权访问的所有变量和函数的有序访问。
+    //作用域链的前端始终都是在当前执行的代码所在执行上下文的变量对象。
+    //如果这个执行上下文是函数，则将其活动对象（activation object）作为变量对象VO。
+    //活动对象在最开始时只包含一个对象，即arguments对象（这个对象在全局上下文中是不存在的）。
+    //作用域链中的下一个变量对象来自当前执行上下文，而再下一个变量对象则来自下一个包含上下文，这样，一直延续到全局执行上下文。
+    //全局执行上下文的变量对象始终都是作用域链中的最后一个对象。 
+    //标示符解析是沿着作用域链一级一级地搜索标示符的过程。搜索过程始终从作用域链的前端开始，然后逐级地向后回溯，直至找到标示符为止。 
+    //作用域链的本质是一个指向变量对象的指针列表，它只引用但不实际包含变量对象。 
+	
+    //改变函数作用域:
+    //每个函数都包含两个非继承而来的方法：apply()和call()。这两个方法的用途就是在特定的作用域中调用函数，实际上等于设置函数体内的this对象的值。 
+    //call() 方法可将一个函数的对象上下文this从初始的上下文改变为指定的新对象。如果没有提供新对象参数，那么 Global 对象被用作 this。 
+    //apply()和call()在作用上是相同的，但两者在参数上有区别的。
+    //apply传入的是一个参数数组，也就是将多个参数组合成为一个数组传入，而call则作为call的参数传入。
+		
+    //function.caller属性:返回一个对函数的引用，即调用了当前函数的函数体。 
+    //对于函数来说，caller 属性只有在函数执行时才有定义。 如果函数是由 JScript 程序的顶层调用的，那么 caller 为 null 。
+    function callLevel() {
+		if (callLevel.caller == funCaller)
+			show("callLevel was called by another function", callLevel.caller);
+		else 
+			show("callLevel was called from the top level", callLevel.caller);
+	}
+	function funCaller() {
+		callLevel();
+	}
+	callLevel();	//callLevel was called from the top level. null
+	funCaller();	//callLevel was called by another function: function funCaller() { callLevel(); }
+	
+    //caller取决于调用语句所在的层次，同一调用语句中的多个函数调用，caller相同
+    function multiCall() {
+        function currying() {
+            return function() {
+                var callfrom = arguments.callee.caller;
+                return function() {
+                    show("arguments.callee.caller === callfrom", arguments.callee.caller === callfrom); //true
+                    show("callfrom", callfrom);     //function multiCall() { function currying(){ ... } currying()()(); }
+                };
+            };
+        }
+        currying()()();
+    }
+    multiCall();
+    
+	//arguments.callee属性是 arguments 对象的一个成员，它表示对函数对象本身的引用，这有利于匿名函数的递归或者保证函数的封装性
+	//递归计算 
+	var sum = function(n) {
+		if (n <= 0)
+			return 0;
+		else
+			return n + arguments.callee(n - 1);
+	};
+	show("sum(100)", sum(100));		//5500
+		
+	//函数绑定bind：一个日益流行，在很多插件(jquery)中都能见到的一个技巧。
+	//函数绑定要创建一个函数，可以在特定的this上下文中以指定参数调用另一个函数。它常常和回调函数与事件处理程序一起使用，以便在将函数作为变量传递的同时保留代码执行上下文。 
+	//ECMAScript5为所有函数定义了一个原生的bind()方法，进一步简单了操作。 
+	//在javascript中，函数总是在一个特殊的上下文执行（称为执行上下文），如果你将一个对象的函数赋值给另外一个变量的话，
+	//这个函数的执行上下文就变为这个变量的上下文了（this）。
+	//如果你希望将一个对象的函数赋值给另外一个变量后，这个函数的执行上下文仍然为这个对象，那么就需要用到bind方法。 
+	var name = "the global object";
+	function scopeTest() {
+		return this.name;
+	}
+	show("global scope", scopeTest());	//the global object
+		
+	var foo = {
+		name: "the foo object!",
+		otherScopeTest: function() { return this.name; }
+	};
+	show("foo scope", foo.otherScopeTest());			//the foo object!
+	var __foo = foo.otherScopeTest;
+	//执行上下文从foo编程global，即this指向global
+	show("change scope", __foo());			//the global object
+	function runFx(f) {
+        return f();
+    }
+	show("change scope", runFx(foo.otherScopeTest));	//the global object
+    
+	//使用bind，将function的this绑定为指定参数
+	var fx = foo.otherScopeTest.bind(foo);
+	show("after bind", runFx(fx));	//the foo object!
+		
+	//没有块级作用域:
+	//JavaScript没有块级作用域。
+	//If for语句中的变量声明会自动将变量添加到当前的执行上下文,for循环执行结束后，也依旧会存在于循环外部的执行上下文中。 
+	//使用var声明的变量会自动被添加到最接近的执行上下文中。如果初始化变量时没有使用var声明，该变量会自动被添加到全局上下文中。 
+	function varDeclare() {
+		var localVar = "local var";
+		globalVar = "global var";
+	}
+	varDeclare();
+	if (true) {
+		var ifVar = "if var";
+	}
+	try {
+		show("ifVar", ifVar);
+		show("localVar", localVar);
+	} catch(err) {
+		show("error", err);	//ReferenceError: localVar is not defined
+	}
+	show("global.globalVar", global.globalVar);		//global var
+		
+	//函数声明与函数表达式:
+	//函数声明与函数表达式区别在于：解析器向执行上下文中加载数据时对它们并非一视同仁。
+	//解析器会率先读取函数声明，并使其在执行任何代码之前可以访问，这个重要特征就是函数声明提升(置顶解析)。
+	//至于函数表达式，则必须等到解析器执行到它所在的代码行，才会真正被解释执行。 
+	//函数声明:
+	function funcName() { }
+	//函数表达式:
+	(function () {
+		//通过匿名函数可以模拟块级作用域
+		var localVar = "local var";
+	})();
+	//localVar 未定义
+		
+	var str = "global";
+	function scopeTestVar() {
+		//scopeTestVar()调用时的执行上下文是global，this指向global
+		show("this.str", this.str);		//global var
+		//这里str是局部变量，变量和函数声明提升，在其他代码执行之前解析
+		str="aaa";
+		show("local str", str);		//aaa
+		var str = "local";
+		show("local str", str);		//local
+	}
+	scopeTestVar();
+	show("global str", str);				//global var
+	// ]]>
+	</script>
+  </body>
+</html>

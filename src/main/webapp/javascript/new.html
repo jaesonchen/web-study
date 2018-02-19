@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>new.html</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    <script type="text/javascript" src="../assets/js/jquery-1.11.3.js"></script>
+  </head>
+  
+  <body>
+	<div id="div"></div>
+	<script type="text/javascript">
+	// <![CDATA[
+    var global = (function () {
+        return this;
+    })();
+    
+    function show(msg, data) {
+        $("#div").append($("<p></p>").text(msg + ": " + data));
+    }
+		
+	//javascript是基于原型(Prototype based)的面向对象的语言
+	//只有带有this关键字的构造函数function才需要用到new来生成对象, new生成的实例通过__proto__属性指向原型对象，其他情况通常用字面量{}。
+		
+	//无论什么时候，只要声明一个新函数，就会根据一组特定的规则为该构造函数自动创建一个prototype属性，这个属性指向构造函数的原型对象。
+	//在默认情况下，所有原型对象都会自动获得一个prototype.constructor（构造函数）属性，
+	//这个属性constructor包含一个指向 prototype 属性所在构造函数的指针。而通过prototype属性，可以继续为原型对象添加其他属性和方法。
+	//创建了自定义的构造函数后，其原型对象默认只会取得 constructor 属性；至于其他方法，则都从 Object 继承而来。
+	//当调用构造函数创建一个新实例后，该实例的内部将包含一个指针（__proto__），指向构造函数的原型对象。
+	//ECMA-262第5版管这个指针叫 [[Prototype]] 。脚本中没有标准的方式访问 [[Prototype]]，
+	//但Firefox、Safari和Chrome在每个对象上都支持一个属性__proto__；而在其他实现中，这个属性对脚本是完全不可见的。
+	//不过，要明确的真正重要的一点就是，这个连接存在于实例和构造函数的原型对象之间，而不是存在于实例和构造函数之间。 
+	//instanceof通过判断prototype是否在同一条原型链上。
+	
+	//此自定义构造函数会自动创建一个指向原型对象的prototype属性，默认是new Object()对象。
+	//原型对象则自动获得一个construtor属性，这个属性指向自定义构造函数Employee。
+	function Employee() {
+	    this.name = "name";
+	    this.dept = "dept";
+	}
+	show("Employee.prototype.constructor == Employee", Employee.prototype.constructor == Employee);	//true
+	show("Employee.prototype instanceof Object", Employee.prototype instanceof Object);			//true
+	//改变自定义构造函数的原型对象时，新原型对象的construtor属性不再是employee
+	Employee.prototype = {
+	    say : "hello",
+	    sayHello : function() {
+	        show("prototype.sayHello()", this.say);
+	    }
+	};
+    show("Employee.prototype.constructor == Employee", Employee.prototype.constructor == Employee);	//false
+	//此处需要手动设置新原型对象的constructor为自定义构造函数
+	Employee.prototype.constructor = Employee;
+	//此处p新建了一个空对象并复制了employee构造函数中的this属性，获得一个属性p.__proto__指向原型对象
+	var p = new Employee();
+	//当对象查找某一成员变量时，首先查找自己的成员属性，如果找到了，返回值。
+	//如果没找到，就去调用__proto__来检查原型链，会从原型链中查找向上进行查找，未查到则返回undefined
+	p.sayHello();		//hello
+		
+	//我们可以这样理解javascript中用new操作创建实例的过程:
+	//new关键字以employee()为模板创建了一个新的空对象{}，它复制了employee构造器中的this成员变量，
+	//也可以理解为，将p对象作为参数传入构造函数中，并且应用函数中所有this的成员变量，
+	//同时继承了构造器的原型对象，使用obj.__proto__属性指向原型链。
+	//用代码模拟new的过程：
+	//var p = new Object() is also correct.
+	var p1 = {};
+	Employee.apply(p1);
+	p1.__proto__ = Employee.prototype;
+	p1.sayHello();		//hello		
+	// ]]>
+	</script>
+  </body>
+</html>
